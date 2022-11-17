@@ -1,0 +1,9 @@
+{
+  "name": "crm",
+  "version": "1.0.0",
+  "description": "CRM",
+  "main": "root.js",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}

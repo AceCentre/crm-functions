@@ -2,4 +2,9 @@ packages:
   - name: sample
     actions:
       - name: hello
-        runtime: 'nodejs:default'
+        runtime: "nodejs:default"
+
+  - name: functions
+    actions:
+      - name: crm
+        runtime: "nodejs:default"
