@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "CRM",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
 }
