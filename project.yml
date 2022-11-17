@@ -4,7 +4,7 @@ packages:
       - name: hello
         runtime: "nodejs:default"
 
-  - name: functions
+  - name: crm
     actions:
-      - name: crm
+      - name: create-contact-from-email
         runtime: "nodejs:default"
