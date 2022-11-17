@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@sugarcrm/ventana": "^1.1.14"
+  },
   "devDependencies": {
     "typescript": "^4.6.3"
   }
