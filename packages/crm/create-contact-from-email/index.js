@@ -1,7 +1,7 @@
-//  const { sharedFunction } = require("../../../src/share-lib");
+const { sharedFunction } = require("../../../src/share-lib");
 
 function main(args, ...rest) {
-  //  sharedFunction();
+  sharedFunction();
   const name = args.name || "stranger";
   const greeting = "Hello " + name + "!";
   console.log(greeting, args, rest);
