@@ -1,8 +1,8 @@
-import { sharedFunction } from "../../../src/share-lib";
+type HandlerOptions = {};
 
-const handler = (...allArgs: any) => {
-  console.log(allArgs);
-  sharedFunction();
+const handler = (handlerOptions: HandlerOptions) => {
+  console.log(handlerOptions);
+
   return { body: "Welcome" };
 };
 
