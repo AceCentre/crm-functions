@@ -2,7 +2,7 @@
   "name": "crm",
   "version": "1.0.0",
   "description": "CRM",
-  "main": "root.js",
+  "main": "index.js",
   "scripts": {},
   "dependencies": {},
   "devDependencies": {}
