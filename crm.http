@@ -1,0 +1,7 @@
+@hostname = https://ace.acrm.accessacloud.com
+@apiPath = /rest/v10
+@api = {{ hostname }}{{ apiPath }}
+
+### Get list of methods
+
+GET {{ api }}/help HTTP/1.1
