@@ -63,7 +63,7 @@ content-type: application/json
 
 ### Request to DO 
 
-POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-email
+POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-email/long/path
 content-type: application/json
 
 {
