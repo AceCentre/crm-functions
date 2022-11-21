@@ -12,7 +12,7 @@ describe("Validate Request", () => {
 
     expect(result).toEqual({
       statusCode: 404,
-      body: { reason: "Endpoint only accepts POST requests" },
+      body: `{"reason":"Endpoint only accepts POST requests"}`,
     });
   });
 
@@ -21,7 +21,7 @@ describe("Validate Request", () => {
 
     expect(result).toEqual({
       statusCode: 404,
-      body: { reason: "Endpoint only accepts POST requests" },
+      body: `{"reason":"Endpoint only accepts POST requests"}`,
     });
   });
 
@@ -30,7 +30,7 @@ describe("Validate Request", () => {
 
     expect(result).toEqual({
       statusCode: 404,
-      body: { reason: "Endpoint only accepts POST requests" },
+      body: `{"reason":"Endpoint only accepts POST requests"}`,
     });
   });
 
@@ -39,7 +39,7 @@ describe("Validate Request", () => {
 
     expect(result).toEqual({
       statusCode: 404,
-      body: { reason: "Endpoint only accepts requests to /" },
+      body: `{"reason":"Endpoint only accepts requests to /"}`,
     });
   });
 
@@ -48,7 +48,7 @@ describe("Validate Request", () => {
 
     expect(result).toEqual({
       statusCode: 404,
-      body: { reason: "Endpoint only accepts requests to /" },
+      body: `{"reason":"Endpoint only accepts requests to /"}`,
     });
   });
 
@@ -57,7 +57,7 @@ describe("Validate Request", () => {
 
     expect(result).toEqual({
       statusCode: 400,
-      body: { reason: "No email provided" },
+      body: `{"reason":"No email provided"}`,
     });
   });
 });

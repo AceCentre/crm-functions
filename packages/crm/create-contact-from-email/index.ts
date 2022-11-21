@@ -6,7 +6,7 @@ type GenericHandlerOptions = {
 
 type GenericHandlerResult = {
   statusCode?: number;
-  body?: { reason?: string; message?: string };
+  body?: string;
 };
 
 class SugarCrmService {
@@ -30,7 +30,7 @@ export const handler = (
   ) {
     return {
       statusCode: 404,
-      body: { reason: "Endpoint only accepts POST requests" },
+      body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
     };
   }
 
@@ -40,19 +40,22 @@ export const handler = (
   ) {
     return {
       statusCode: 404,
-      body: { reason: "Endpoint only accepts requests to /" },
+      body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
     };
   }
 
   if (!handlerOptions.email) {
-    return { statusCode: 400, body: { reason: "No email provided" } };
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ reason: "No email provided" }),
+    };
   }
 
   const crmService = new SugarCrmService();
 
   console.log(handlerOptions);
 
-  return { body: { message: "Welcome" } };
+  return { body: JSON.stringify({ message: "Welcome" }) };
 };
 
 export const main = handler;
