@@ -1,14 +1,3 @@
-import Ventana from "@sugarcrm/ventana";
-
-const SugarApi = Ventana.getInstance({
-  serverUrl: process.env.SERVER_URL,
-  // platform: process.env.PLATFORM,
-  // timeout: process.env.SERVER_TIMEOUT,
-  // clientID: process.env.CLIENT_ID,
-});
-
-console.log(process.env);
-
 type HandlerOptions = {
   __ow_method: "get" | "post";
 };
@@ -23,9 +12,7 @@ const handler = (handlerOptions: HandlerOptions): HandlerResult => {
     return { statusCode: 404 };
   }
 
-  const result = SugarApi.getMetadata();
-
-  console.log(result, handlerOptions);
+  console.log(handlerOptions);
 
   return { body: "Welcome" };
 };
