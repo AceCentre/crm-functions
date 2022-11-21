@@ -5,3 +5,58 @@
 ### Get list of methods
 
 GET {{ api }}/help HTTP/1.1
+
+### Auth Method
+# @name authRequest
+POST {{ api }}/oauth2/token
+content-type: application/json
+
+{
+    "grant_type":"password",
+    "client_id": "sugar",
+    "username": "{{ crmUsername }}",
+    "password": "{{ crmPassword }}",
+    "platform": "custom-crm-connector"
+}
+
+### Get contacts (only 20)
+
+GET {{ api }}/Contacts
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+
+### Filter contacts by email, with results
+@emailToFind = testing-api-7628537@gavinhenderson.co.uk
+
+GET {{ api }}/Contacts
+    ?filter=[{"email": "{{ emailToFind }}" }]
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+
+
+### Filter contacts by email, no results
+
+GET {{ api }}/Contacts
+    ?filter=[{"email":"totallymadeup"}]
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+
+### Create Contact
+@randomEmail = testing-api-{{ $randomInt 0 9999999 }}@gavinhenderson.co.uk
+POST {{ api }}/Contacts
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+content-type: application/json
+
+{
+    "email1": "{{ randomEmail }}",
+    "first_name": "{{ randomEmail }}",
+    "last_name": "Unknown",
+    "receives_newsletter_c": false
+}
+
+### Switch contact to recieve newsletter
+@idToSubscribe = da95208e-69ab-11ed-ae8a-00163ecfc8ed
+PUT {{ api }}/Contacts/{{ idToSubscribe }}
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+content-type: application/json
+
+{
+    "receives_newsletter_c": true
+}
