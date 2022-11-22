@@ -1,9 +1,4 @@
 packages:
-  - name: sample
-    actions:
-      - name: hello
-        runtime: "nodejs:default"
-
   - name: crm
     actions:
       - name: create-contact-from-email
