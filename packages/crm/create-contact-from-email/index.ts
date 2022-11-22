@@ -1,69 +1,67 @@
-type GenericHandlerOptions = {
-  __ow_method?: string;
-  __ow_path?: string;
-  __ow_headers?: {};
-};
+// type GenericHandlerOptions = {
+//   __ow_method?: string;
+//   __ow_path?: string;
+//   __ow_headers?: {};
+// };
 
-type GenericHandlerResult = {
-  statusCode?: number;
-  body?: string;
-};
+// type GenericHandlerResult = {
+//   statusCode?: number;
+//   body?: string;
+// };
 
-class SugarService {
-  constructor() {}
+// class SugarService {
+//   constructor() {}
 
-  async authenticate(): Promise<void> {
-    return;
-  }
-}
+//   async authenticate(): Promise<void> {
+//     return;
+//   }
+// }
 
-const ALLOWED_PATHS = ["", "/"];
+// const ALLOWED_PATHS = ["", "/"];
 
-type CreateContactHandlerOptions = {
-  email?: string;
-} & GenericHandlerOptions;
+// type CreateContactHandlerOptions = {
+//   email?: string;
+// } & GenericHandlerOptions;
 
-type CreateContactHandlerResult = {} & GenericHandlerResult;
+// type CreateContactHandlerResult = {} & GenericHandlerResult;
 
-export const handler = async (
-  handlerOptions: CreateContactHandlerOptions
-): Promise<CreateContactHandlerResult> => {
+export const handler = (): any => {
   return { statusCode: 200 };
 
-  if (
-    handlerOptions.__ow_method === undefined ||
-    handlerOptions.__ow_method.toLowerCase() !== "post"
-  ) {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
-    };
-  }
+  // if (
+  //   handlerOptions.__ow_method === undefined ||
+  //   handlerOptions.__ow_method.toLowerCase() !== "post"
+  // ) {
+  //   return {
+  //     statusCode: 404,
+  //     body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
+  //   };
+  // }
 
-  if (
-    handlerOptions.__ow_path === undefined ||
-    !ALLOWED_PATHS.includes(handlerOptions.__ow_path)
-  ) {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
-    };
-  }
+  // if (
+  //   handlerOptions.__ow_path === undefined ||
+  //   !ALLOWED_PATHS.includes(handlerOptions.__ow_path)
+  // ) {
+  //   return {
+  //     statusCode: 404,
+  //     body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
+  //   };
+  // }
 
-  if (!handlerOptions.email) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ reason: "No email provided" }),
-    };
-  }
+  // if (!handlerOptions.email) {
+  //   return {
+  //     statusCode: 400,
+  //     body: JSON.stringify({ reason: "No email provided" }),
+  //   };
+  // }
 
-  const crmService = new SugarService();
+  // const crmService = new SugarService();
 
-  await crmService.authenticate();
+  // await crmService.authenticate();
 
-  console.log(handlerOptions);
+  // console.log(handlerOptions);
 
-  return { body: JSON.stringify({ message: "Welcome" }) };
+  // return { statusCode: 200, body: JSON.stringify({ message: "Welcome" }) };
 };
 
 export const main = handler;
