@@ -7,6 +7,4 @@ packages:
   - name: crm
     actions:
       - name: create-contact-from-email
-        environment:
-          SERVER_URL: "${SERVER_URL}"
         runtime: "nodejs:default"
