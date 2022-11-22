@@ -1,75 +1,138 @@
-// type GenericHandlerOptions = {
-//   __ow_method?: string;
-//   __ow_path?: string;
-//   __ow_headers?: {};
-// };
+import { SugarService } from "./sugar-service";
 
-// type GenericHandlerResult = {
-//   statusCode?: number;
-//   body?: string;
-// };
+type GenericHandlerOptions = {
+  __ow_method?: string;
+  __ow_path?: string;
+  __ow_headers?: {};
+};
 
-// class SugarService {
-//   constructor() {}
+type GenericHandlerResult = {
+  statusCode?: number;
+  body?: string;
+};
 
-//   async authenticate(): Promise<void> {
-//     return;
-//   }
-// }
+const ALLOWED_PATHS = ["", "/"];
 
-// const ALLOWED_PATHS = ["", "/"];
+type CreateContactHandlerOptions = {
+  email?: string;
+} & GenericHandlerOptions;
 
-// type CreateContactHandlerOptions = {
-//   email?: string;
-// } & GenericHandlerOptions;
+type CreateContactHandlerResult = {} & GenericHandlerResult;
 
-// type CreateContactHandlerResult = {} & GenericHandlerResult;
+export const handler = async (
+  handlerOptions: CreateContactHandlerOptions
+): Promise<CreateContactHandlerResult> => {
+  if (
+    handlerOptions.__ow_method === undefined ||
+    handlerOptions.__ow_method.toLowerCase() !== "post"
+  ) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
+    };
+  }
 
-// export const handler = (): any => {
-//   return { statusCode: 200 };
+  if (
+    handlerOptions.__ow_path === undefined ||
+    !ALLOWED_PATHS.includes(handlerOptions.__ow_path)
+  ) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
+    };
+  }
 
-// if (
-//   handlerOptions.__ow_method === undefined ||
-//   handlerOptions.__ow_method.toLowerCase() !== "post"
-// ) {
-//   return {
-//     statusCode: 404,
-//     body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
-//   };
-// }
+  if (!handlerOptions.email) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ reason: "No email provided" }),
+    };
+  }
 
-// if (
-//   handlerOptions.__ow_path === undefined ||
-//   !ALLOWED_PATHS.includes(handlerOptions.__ow_path)
-// ) {
-//   return {
-//     statusCode: 404,
-//     body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
-//   };
-// }
+  const crmService = new SugarService();
 
-// if (!handlerOptions.email) {
-//   return {
-//     statusCode: 400,
-//     body: JSON.stringify({ reason: "No email provided" }),
-//   };
-// }
+  try {
+    await crmService.authenticate();
+  } catch (error) {
+    console.log("An error occurred whilst authenticating to SugarCRM");
+    console.log(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ reason: "Failed to authenticate to SugarCRM." }),
+    };
+  }
 
-// const crmService = new SugarService();
+  let listOfExistingContacts = [];
+  try {
+    listOfExistingContacts = await crmService.getContactsByEmail(
+      handlerOptions.email
+    );
+  } catch (error) {
+    console.log("An error occurred whilst trying to get contacts by email");
+    console.log(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ reason: "Failed to get contacts by email." }),
+    };
+  }
 
-// await crmService.authenticate();
+  if (listOfExistingContacts.length === 0) {
+    console.log("No existing contacts found for:", handlerOptions.email);
 
-// console.log(handlerOptions);
+    try {
+      const newContact = await crmService.createNewContact(
+        handlerOptions.email
+      );
+      console.log("Successfully created new contact", newContact.id);
+    } catch (error) {
+      console.log(
+        `An error occurred whilst trying to create a new contact for: ${handlerOptions.email}`
+      );
+      console.log(error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ reason: "Failed to create a new contact." }),
+      };
+    }
 
-// return { statusCode: 200, body: JSON.stringify({ message: "Welcome" }) };
-// };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Create a new contact for email." }),
+    };
+  } else {
+    console.log(
+      `Found ${listOfExistingContacts.length} contact(s) for email ${handlerOptions.email}`
+    );
 
-// export const main = handler;
+    for (const currentContact of listOfExistingContacts) {
+      console.log("Opting into mailing for contact:", currentContact.id);
 
-const handler = (...allArgs: any) => {
-  console.log(allArgs);
+      try {
+        await crmService.optInToMailing(currentContact);
+      } catch (error) {
+        console.log(
+          `An error occurred whilst trying to opt ${currentContact.id} into mailing`
+        );
+        console.log(error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ reason: "Failed to opt user into mailing." }),
+        };
+      }
+    }
 
-  return { body: "Welcome" };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: `Updated ${listOfExistingContacts.length} existing contact`,
+      }),
+    };
+  }
+
+  return {
+    statusCode: 500,
+    body: JSON.stringify({ reason: "An error occurred" }),
+  };
 };
 
 export const main = handler;

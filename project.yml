@@ -3,3 +3,5 @@ packages:
     actions:
       - name: create-contact-from-email
         runtime: "nodejs:default"
+        limits:
+          timeout: 1500
