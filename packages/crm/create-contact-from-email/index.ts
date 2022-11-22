@@ -25,43 +25,51 @@
 
 // type CreateContactHandlerResult = {} & GenericHandlerResult;
 
-export const handler = (): any => {
-  return { statusCode: 200 };
+// export const handler = (): any => {
+//   return { statusCode: 200 };
 
-  // if (
-  //   handlerOptions.__ow_method === undefined ||
-  //   handlerOptions.__ow_method.toLowerCase() !== "post"
-  // ) {
-  //   return {
-  //     statusCode: 404,
-  //     body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
-  //   };
-  // }
+// if (
+//   handlerOptions.__ow_method === undefined ||
+//   handlerOptions.__ow_method.toLowerCase() !== "post"
+// ) {
+//   return {
+//     statusCode: 404,
+//     body: JSON.stringify({ reason: "Endpoint only accepts POST requests" }),
+//   };
+// }
 
-  // if (
-  //   handlerOptions.__ow_path === undefined ||
-  //   !ALLOWED_PATHS.includes(handlerOptions.__ow_path)
-  // ) {
-  //   return {
-  //     statusCode: 404,
-  //     body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
-  //   };
-  // }
+// if (
+//   handlerOptions.__ow_path === undefined ||
+//   !ALLOWED_PATHS.includes(handlerOptions.__ow_path)
+// ) {
+//   return {
+//     statusCode: 404,
+//     body: JSON.stringify({ reason: "Endpoint only accepts requests to /" }),
+//   };
+// }
 
-  // if (!handlerOptions.email) {
-  //   return {
-  //     statusCode: 400,
-  //     body: JSON.stringify({ reason: "No email provided" }),
-  //   };
-  // }
+// if (!handlerOptions.email) {
+//   return {
+//     statusCode: 400,
+//     body: JSON.stringify({ reason: "No email provided" }),
+//   };
+// }
 
-  // const crmService = new SugarService();
+// const crmService = new SugarService();
 
-  // await crmService.authenticate();
+// await crmService.authenticate();
 
-  // console.log(handlerOptions);
+// console.log(handlerOptions);
 
-  // return { statusCode: 200, body: JSON.stringify({ message: "Welcome" }) };
+// return { statusCode: 200, body: JSON.stringify({ message: "Welcome" }) };
+// };
+
+// export const main = handler;
+
+const handler = (...allArgs: any) => {
+  console.log(allArgs);
+
+  return { body: "Welcome" };
 };
 
 export const main = handler;
