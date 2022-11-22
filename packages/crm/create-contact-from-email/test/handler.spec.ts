@@ -7,8 +7,8 @@ describe("Check suite is working", () => {
 });
 
 describe("Validate Request", () => {
-  test("Returns a 404 when no method is given", () => {
-    const result = main({ __ow_path: "" });
+  test("Returns a 404 when no method is given", async () => {
+    const result = await main({ __ow_path: "" });
 
     expect(result).toEqual({
       statusCode: 404,
@@ -16,8 +16,8 @@ describe("Validate Request", () => {
     });
   });
 
-  test("Returns a 404 when a get is sent", () => {
-    const result = main({ __ow_path: "", __ow_method: "get" });
+  test("Returns a 404 when a get is sent", async () => {
+    const result = await main({ __ow_path: "", __ow_method: "get" });
 
     expect(result).toEqual({
       statusCode: 404,
@@ -25,8 +25,8 @@ describe("Validate Request", () => {
     });
   });
 
-  test("Returns a 404 when a made up method is sent", () => {
-    const result = main({ __ow_path: "", __ow_method: "not real" });
+  test("Returns a 404 when a made up method is sent", async () => {
+    const result = await main({ __ow_path: "", __ow_method: "not real" });
 
     expect(result).toEqual({
       statusCode: 404,
@@ -34,8 +34,8 @@ describe("Validate Request", () => {
     });
   });
 
-  test("Returns a 404 when no path is given", () => {
-    const result = main({ __ow_method: "post" });
+  test("Returns a 404 when no path is given", async () => {
+    const result = await main({ __ow_method: "post" });
 
     expect(result).toEqual({
       statusCode: 404,
@@ -43,8 +43,11 @@ describe("Validate Request", () => {
     });
   });
 
-  test("Returns a 404 when another path is given", () => {
-    const result = main({ __ow_method: "post", __ow_path: "/this-is-a-path" });
+  test("Returns a 404 when another path is given", async () => {
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "/this-is-a-path",
+    });
 
     expect(result).toEqual({
       statusCode: 404,
@@ -52,8 +55,8 @@ describe("Validate Request", () => {
     });
   });
 
-  test("Returns a bad request if no email is given", () => {
-    const result = main({ __ow_method: "post", __ow_path: "" });
+  test("Returns a bad request if no email is given", async () => {
+    const result = await main({ __ow_method: "post", __ow_path: "" });
 
     expect(result).toEqual({
       statusCode: 400,

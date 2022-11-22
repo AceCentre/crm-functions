@@ -9,8 +9,12 @@ type GenericHandlerResult = {
   body?: string;
 };
 
-class SugarCrmService {
+class SugarService {
   constructor() {}
+
+  async authenticate(): Promise<void> {
+    return;
+  }
 }
 
 const ALLOWED_PATHS = ["", "/"];
@@ -21,9 +25,11 @@ type CreateContactHandlerOptions = {
 
 type CreateContactHandlerResult = {} & GenericHandlerResult;
 
-export const handler = (
+export const handler = async (
   handlerOptions: CreateContactHandlerOptions
-): CreateContactHandlerResult => {
+): Promise<CreateContactHandlerResult> => {
+  return { statusCode: 200 };
+
   if (
     handlerOptions.__ow_method === undefined ||
     handlerOptions.__ow_method.toLowerCase() !== "post"
@@ -51,7 +57,9 @@ export const handler = (
     };
   }
 
-  const crmService = new SugarCrmService();
+  const crmService = new SugarService();
+
+  await crmService.authenticate();
 
   console.log(handlerOptions);
 
