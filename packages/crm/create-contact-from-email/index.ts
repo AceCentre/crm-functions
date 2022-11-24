@@ -1,5 +1,5 @@
 export const handler = () => {
-  return { body: "welcome" };
+  return { statusCode: 200, body: "welcome" };
 };
 
 export const main = handler;
