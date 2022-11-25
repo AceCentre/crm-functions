@@ -1,5 +1,5 @@
-export const handler = () => {
-  return { statusCode: 200, body: "welcome" };
-};
+function main(args: {}): {} {
+  return { body: "greeting" };
+}
 
-export const main = handler;
+export { main };
