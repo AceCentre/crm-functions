@@ -84,7 +84,7 @@ class SugarService {
     async createNewContact(email) {
         const createPath = `${this.api}/Contacts`;
         const result = await this.getBody(createPath, "POST", true, {
-            email,
+            email1: email,
             first_name: email,
             last_name: "Unknown",
             receives_newsletter_c: true,
