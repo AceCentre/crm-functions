@@ -63,9 +63,9 @@ content-type: application/json
 
 ### Request to DO 
 
-POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-email/long/path
+POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-email
 content-type: application/json
 
 {
-    "random": true
+    "email": "fake"
 }
