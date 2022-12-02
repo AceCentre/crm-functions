@@ -57,6 +57,8 @@ export class SugarService {
       );
     }
 
+    console.log({ response, path, method });
+
     return response;
   }
 
