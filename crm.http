@@ -67,5 +67,5 @@ POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-emai
 content-type: application/json
 
 {
-    "email": "fake"
+    "email": "fake@gavinhenderson.co.uk"
 }
