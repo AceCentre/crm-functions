@@ -33,6 +33,7 @@ class SugarService {
         if (statusCode !== 200) {
             throw new Error(`Non 200 status given for path: ${path}. Status code: ${statusCode}, body: ${JSON.stringify(response)}`);
         }
+        console.log({ response, path, method });
         return response;
     }
     async authenticate() {
