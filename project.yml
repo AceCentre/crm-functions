@@ -1,5 +1,8 @@
 packages:
   - name: crm
+
+    CRM_USERNAME: "${CRM_USERNAME}"
+    CRM_PASSWORD: "${CRM_PASSWORD}"
     actions:
       - name: create-contact-from-email
         runtime: "nodejs:default"

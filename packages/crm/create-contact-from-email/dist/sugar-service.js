@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SugarService = void 0;
 const undici_1 = require("undici");
-const USERNAME = "<REDACTED>";
-const PASSWORD = "<REDACTED>";
+const USERNAME = process.env.CRM_USERNAME;
+const PASSWORD = process.env.CRM_PASSWORD;
 class SugarService {
     constructor() {
         this.hostname = "https://ace.acrm.accessacloud.com";
