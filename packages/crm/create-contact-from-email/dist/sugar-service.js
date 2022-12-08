@@ -67,17 +67,17 @@ class SugarService {
             return result.records
                 .map((record) => {
                 if (record &&
-                    record.id &&
+                    record.id !== undefined &&
                     typeof record.id === "string" &&
-                    record.first_name &&
+                    record.first_name !== undefined &&
                     typeof record.first_name === "string" &&
-                    record.last_name &&
+                    record.last_name !== undefined &&
                     typeof record.last_name === "string" &&
-                    record.sign_up_form_location_c &&
+                    record.sign_up_form_location_c !== undefined &&
                     typeof record.sign_up_form_location_c === "string" &&
-                    record.email1 &&
+                    record.email1 !== undefined &&
                     typeof record.email1 === "string" &&
-                    record.receives_newsletter_c &&
+                    record.receives_newsletter_c !== undefined &&
                     typeof record.receives_newsletter_c === "boolean") {
                     return {
                         id: record.id,
@@ -87,6 +87,9 @@ class SugarService {
                         email: record.email1,
                         receivesNewsletter: record.receives_newsletter_c,
                     };
+                }
+                else {
+                    return null;
                 }
             })
                 .filter((x) => x !== null);
@@ -116,17 +119,17 @@ class SugarService {
             receives_newsletter_c: newContact.receivesNewsletter,
         });
         if (result &&
-            result.id &&
+            result.id !== undefined &&
             typeof result.id === "string" &&
-            result.first_name &&
+            result.first_name !== undefined &&
             typeof result.first_name === "string" &&
-            result.last_name &&
+            result.last_name !== undefined &&
             typeof result.last_name === "string" &&
-            result.sign_up_form_location_c &&
+            result.sign_up_form_location_c !== undefined &&
             typeof result.sign_up_form_location_c === "string" &&
-            result.email1 &&
+            result.email1 !== undefined &&
             typeof result.email1 === "string" &&
-            result.receives_newsletter_c &&
+            result.receives_newsletter_c !== undefined &&
             typeof result.receives_newsletter_c === "boolean") {
             return {
                 id: result.id,
