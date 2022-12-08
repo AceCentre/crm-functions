@@ -33,6 +33,8 @@ export class SugarService {
       headers["Authorization"] = `Bearer ${this.token}`;
     }
 
+    console.log({ path, ...reqBody });
+
     const { body, statusCode } = await request(path, {
       method,
       body: JSON.stringify(reqBody),

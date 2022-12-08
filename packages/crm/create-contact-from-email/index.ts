@@ -32,6 +32,7 @@ const slugify = (input: string): string =>
 export const handler = async (
   handlerOptions: CreateContactHandlerOptions
 ): Promise<CreateContactHandlerResult> => {
+  console.log(handlerOptions);
   if (
     handlerOptions.__ow_method === undefined ||
     handlerOptions.__ow_method.toLowerCase() !== "post"
