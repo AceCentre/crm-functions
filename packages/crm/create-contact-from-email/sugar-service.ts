@@ -1,7 +1,6 @@
 import { request } from "undici";
 
-// const USERNAME = process.env.CRM_USERNAME;
-const USERNAME = "nonsense";
+const USERNAME = process.env.CRM_USERNAME;
 const PASSWORD = process.env.CRM_PASSWORD;
 
 export class SugarService {
