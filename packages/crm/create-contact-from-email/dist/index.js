@@ -100,7 +100,7 @@ const handler = async (handlerOptions) => {
                     receivesNewsletter: true,
                 };
                 if (!!currentContact.location == false && handlerOptions.location) {
-                    updateContact.location = handlerOptions.location;
+                    updateContact.location = slugify(handlerOptions.location);
                 }
                 if (currentContact.lastName.toLowerCase() === "unknown" &&
                     handlerOptions.lastName) {

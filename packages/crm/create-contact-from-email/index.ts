@@ -145,7 +145,7 @@ export const handler = async (
         };
 
         if (!!currentContact.location == false && handlerOptions.location) {
-          updateContact.location = handlerOptions.location;
+          updateContact.location = slugify(handlerOptions.location);
         }
 
         if (
