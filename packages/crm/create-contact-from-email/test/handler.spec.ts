@@ -95,12 +95,19 @@ describe("Handles Sugar errors", () => {
         return Promise.resolve([]);
       }),
 
-      optInToMailing: jest.fn(() => {
+      updateContact: jest.fn(() => {
         return Promise.resolve();
       }),
 
       createNewContact: jest.fn(() => {
-        return Promise.resolve({ id: "123" });
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
       }),
     }));
 
@@ -135,12 +142,19 @@ describe("Handles Sugar errors", () => {
         throw new Error("Cant get contacts");
       }),
 
-      optInToMailing: jest.fn(() => {
+      updateContact: jest.fn(() => {
         return Promise.resolve();
       }),
 
       createNewContact: jest.fn(() => {
-        return Promise.resolve({ id: "123" });
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
       }),
     }));
 
@@ -175,7 +189,7 @@ describe("Handles Sugar errors", () => {
         return Promise.resolve([]);
       }),
 
-      optInToMailing: jest.fn(() => {
+      updateContact: jest.fn(() => {
         return Promise.resolve();
       }),
 
@@ -212,15 +226,31 @@ describe("Handles Sugar errors", () => {
       }),
 
       getContactsByEmail: jest.fn(() => {
-        return Promise.resolve([{ id: "123" }]);
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "",
+            lastName: "",
+            location: "",
+            email: "",
+            receivesNewsletter: false,
+          },
+        ]);
       }),
 
-      optInToMailing: jest.fn(() => {
+      updateContact: jest.fn(() => {
         throw new Error("Failed to opt user in");
       }),
 
       createNewContact: jest.fn(() => {
-        return Promise.resolve({ id: "123" });
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
       }),
     }));
 
@@ -233,6 +263,699 @@ describe("Handles Sugar errors", () => {
     expect(result).toEqual({
       statusCode: 500,
       body: `{"reason":"Failed to opt user into mailing."}`,
+    });
+  });
+});
+
+describe("Sign up location", () => {
+  test("Sends a sign up location if it is given", async () => {
+    const createNewContact = jest.fn(() => {
+      return Promise.resolve({
+        id: "123",
+        firstName: "",
+        lastName: "",
+        location: "test-location",
+        receivesNewsletter: true,
+        email: "",
+      });
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([]);
+      }),
+
+      updateContact: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      createNewContact,
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      location: "test-location",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Create a new contact for email."}',
+    });
+
+    expect(createNewContact).toBeCalledTimes(1);
+    expect(createNewContact).toBeCalledWith({
+      email: "user-to-add@email.com",
+      location: "test-location",
+      receivesNewsletter: true,
+      firstName: "user-to-add@email.com",
+      lastName: "Unknown",
+    });
+  });
+
+  test("Converts location into slug", async () => {
+    const createNewContact = jest.fn(() => {
+      return Promise.resolve({
+        id: "123",
+        firstName: "",
+        lastName: "",
+        location: "non-slugged-test",
+        receivesNewsletter: true,
+        email: "",
+      });
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([]);
+      }),
+
+      updateContact: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      createNewContact,
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      location: "Non Slugged test",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Create a new contact for email."}',
+    });
+
+    expect(createNewContact).toBeCalledTimes(1);
+    expect(createNewContact).toBeCalledWith({
+      email: "user-to-add@email.com",
+      location: "non-slugged-test",
+      firstName: "user-to-add@email.com",
+      lastName: "Unknown",
+      receivesNewsletter: true,
+    });
+  });
+
+  test("Ignores an empty sign up location", async () => {
+    const createNewContact = jest.fn(() => {
+      return Promise.resolve({
+        id: "123",
+        firstName: "",
+        lastName: "",
+        location: "",
+        receivesNewsletter: true,
+        email: "",
+      });
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([]);
+      }),
+
+      updateContact: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      createNewContact,
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      location: "",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Create a new contact for email."}',
+    });
+
+    expect(createNewContact).toBeCalledTimes(1);
+    expect(createNewContact).toBeCalledWith({
+      email: "user-to-add@email.com",
+      firstName: "user-to-add@email.com",
+      lastName: "Unknown",
+      receivesNewsletter: true,
+    });
+  });
+
+  test("Overwrites an empty location", async () => {
+    const updateContact = jest.fn(() => {
+      return Promise.resolve();
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "",
+            lastName: "",
+            location: "",
+            receivesNewsletter: true,
+            email: "",
+          },
+        ]);
+      }),
+
+      updateContact,
+
+      createNewContact: jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
+      }),
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      location: "overwrite",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Updated 1 existing contact"}',
+    });
+
+    expect(updateContact).toBeCalledTimes(1);
+    expect(updateContact).toBeCalledWith({
+      id: "123",
+      location: "overwrite",
+      receivesNewsletter: true,
+    });
+  });
+
+  test("Leaves an existing location", async () => {
+    const updateContact = jest.fn(() => {
+      return Promise.resolve();
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "",
+            lastName: "",
+            location: "existing-location",
+            receivesNewsletter: true,
+            email: "",
+          },
+        ]);
+      }),
+
+      updateContact,
+
+      createNewContact: jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
+      }),
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      location: "overwrite",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Updated 1 existing contact"}',
+    });
+
+    expect(updateContact).toBeCalledTimes(1);
+    expect(updateContact).toBeCalledWith({
+      id: "123",
+      receivesNewsletter: true,
+    });
+  });
+});
+
+describe("Names", () => {
+  test("Ignores names if a name already exists", async () => {
+    const updateContact = jest.fn(() => {
+      return Promise.resolve();
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "Gavin",
+            lastName: "Henderson",
+            location: "",
+            receivesNewsletter: true,
+            email: "",
+          },
+        ]);
+      }),
+
+      updateContact,
+
+      createNewContact: jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "realName",
+          lastName: "realName",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
+      }),
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      firstName: "NewFirst",
+      lastName: "NewLast",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Updated 1 existing contact"}',
+    });
+
+    expect(updateContact).toBeCalledTimes(1);
+    expect(updateContact).toBeCalledWith({
+      id: "123",
+      receivesNewsletter: true,
+    });
+  });
+
+  test("Only updates last name if its previously 'unknown'", async () => {
+    const updateContact = jest.fn(() => {
+      return Promise.resolve();
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "Gavin",
+            lastName: "Unknown",
+            location: "",
+            receivesNewsletter: true,
+            email: "",
+          },
+        ]);
+      }),
+
+      updateContact,
+
+      createNewContact: jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "realName",
+          lastName: "realName",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
+      }),
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      lastName: "NewLast",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Updated 1 existing contact"}',
+    });
+
+    expect(updateContact).toBeCalledTimes(1);
+    expect(updateContact).toBeCalledWith({
+      id: "123",
+      receivesNewsletter: true,
+      lastName: "NewLast",
+    });
+  });
+
+  test("Only updates first name if its previously matches the email", async () => {
+    const updateContact = jest.fn(() => {
+      return Promise.resolve();
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "user-to-add@email.com",
+            lastName: "Henderson",
+            location: "",
+            receivesNewsletter: true,
+            email: "user-to-add@email.com",
+          },
+        ]);
+      }),
+
+      updateContact,
+
+      createNewContact: jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "realName",
+          lastName: "realName",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
+      }),
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      firstName: "NewFirst",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Updated 1 existing contact"}',
+    });
+
+    expect(updateContact).toBeCalledTimes(1);
+    expect(updateContact).toBeCalledWith({
+      id: "123",
+      receivesNewsletter: true,
+      firstName: "NewFirst",
+    });
+  });
+
+  test("Update both names", async () => {
+    const updateContact = jest.fn(() => {
+      return Promise.resolve();
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([
+          {
+            id: "123",
+            firstName: "user-to-add@email.com",
+            lastName: "Unknown",
+            location: "",
+            receivesNewsletter: true,
+            email: "user-to-add@email.com",
+          },
+        ]);
+      }),
+
+      updateContact,
+
+      createNewContact: jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "realName",
+          lastName: "realName",
+          location: "",
+          receivesNewsletter: true,
+          email: "",
+        });
+      }),
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      firstName: "NewFirst",
+      lastName: "NewLast",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Updated 1 existing contact"}',
+    });
+
+    expect(updateContact).toBeCalledTimes(1);
+    expect(updateContact).toBeCalledWith({
+      id: "123",
+      receivesNewsletter: true,
+      firstName: "NewFirst",
+      lastName: "NewLast",
+    });
+  });
+
+  test("Generate names", async () => {
+    const createNewContact = jest.fn(() => {
+      return Promise.resolve({
+        id: "123",
+        firstName: "realName",
+        lastName: "realName",
+        location: "",
+        receivesNewsletter: true,
+        email: "",
+      });
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([]);
+      }),
+
+      updateContact: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      createNewContact,
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Create a new contact for email."}',
+    });
+
+    expect(createNewContact).toBeCalledTimes(1);
+    expect(createNewContact).toBeCalledWith({
+      email: "user-to-add@email.com",
+      receivesNewsletter: true,
+      firstName: "user-to-add@email.com",
+      lastName: "Unknown",
+    });
+  });
+
+  test("Use given names", async () => {
+    const createNewContact = jest.fn(() => {
+      return Promise.resolve({
+        id: "123",
+        firstName: "realName",
+        lastName: "realName",
+        location: "",
+        receivesNewsletter: true,
+        email: "",
+      });
+    });
+
+    jest.mocked(SugarService).mockImplementation(() => ({
+      apiPath: "apiPath",
+      hostname: "hostname",
+      api: "api",
+      token: "token",
+
+      getBody: jest.fn(() => {
+        return Promise.resolve({ result: true });
+      }),
+
+      authenticate: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      getContactsByEmail: jest.fn(() => {
+        return Promise.resolve([]);
+      }),
+
+      updateContact: jest.fn(() => {
+        return Promise.resolve();
+      }),
+
+      createNewContact,
+    }));
+
+    const result = await main({
+      __ow_method: "post",
+      __ow_path: "",
+      email: "user-to-add@email.com",
+      firstName: "Gavin",
+      lastName: "Henderson",
+    });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: '{"message":"Create a new contact for email."}',
+    });
+
+    expect(createNewContact).toBeCalledTimes(1);
+    expect(createNewContact).toBeCalledWith({
+      email: "user-to-add@email.com",
+      receivesNewsletter: true,
+      firstName: "Gavin",
+      lastName: "Henderson",
     });
   });
 });
