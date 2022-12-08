@@ -3,6 +3,9 @@ packages:
     environment:
       CRM_USERNAME: "${CRM_USERNAME}"
       CRM_PASSWORD: "${CRM_PASSWORD}"
+      SLACK_TOKEN: "${SLACK_TOKEN}"
+      SLACK_SIGNING_TOKEN: "${SLACK_SIGNING_TOKEN}"
+      SEND_SUCCESS: "${SEND_SUCCESS}"
     actions:
       - name: create-contact-from-email
         runtime: "nodejs:default"
