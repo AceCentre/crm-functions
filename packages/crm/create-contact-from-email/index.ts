@@ -1,4 +1,4 @@
-import { SugarService } from "./sugar-service";
+import { NewContact, SugarService, UpdateContact } from "./sugar-service";
 
 type GenericHandlerOptions = {
   __ow_method?: string;
@@ -15,9 +15,19 @@ const ALLOWED_PATHS = ["", "/"];
 
 type CreateContactHandlerOptions = {
   email?: string;
+  location?: string;
+  firstName?: string;
+  lastName?: string;
 } & GenericHandlerOptions;
 
 type CreateContactHandlerResult = {} & GenericHandlerResult;
+
+const slugify = (input: string): string =>
+  input
+    .toLowerCase()
+    .split(" ")
+    .map((x) => x.trim())
+    .join("-");
 
 export const handler = async (
   handlerOptions: CreateContactHandlerOptions
@@ -80,9 +90,26 @@ export const handler = async (
     console.log("No existing contacts found for:", handlerOptions.email);
 
     try {
-      const newContact = await crmService.createNewContact(
-        handlerOptions.email
-      );
+      let unsavedContact: NewContact = {
+        email: handlerOptions.email,
+        receivesNewsletter: true,
+        firstName: handlerOptions.email,
+        lastName: "Unknown",
+      };
+
+      if (handlerOptions.location) {
+        unsavedContact.location = slugify(handlerOptions.location);
+      }
+
+      if (handlerOptions.firstName) {
+        unsavedContact.firstName = handlerOptions.firstName;
+      }
+
+      if (handlerOptions.lastName) {
+        unsavedContact.lastName = handlerOptions.lastName;
+      }
+
+      const newContact = await crmService.createNewContact(unsavedContact);
       console.log("Successfully created new contact", newContact.id);
     } catch (error) {
       console.log(
@@ -108,7 +135,31 @@ export const handler = async (
       console.log("Opting into mailing for contact:", currentContact.id);
 
       try {
-        await crmService.optInToMailing(currentContact);
+        let updateContact: UpdateContact = {
+          id: currentContact.id,
+          receivesNewsletter: true,
+        };
+
+        if (!!currentContact.location == false && handlerOptions.location) {
+          updateContact.location = handlerOptions.location;
+        }
+
+        if (
+          currentContact.lastName.toLowerCase() === "unknown" &&
+          handlerOptions.lastName
+        ) {
+          updateContact.lastName = handlerOptions.lastName;
+        }
+
+        if (
+          currentContact.firstName.toLowerCase() ===
+            currentContact.email.toLowerCase() &&
+          handlerOptions.firstName
+        ) {
+          updateContact.firstName = handlerOptions.firstName;
+        }
+
+        await crmService.updateContact(updateContact);
       } catch (error) {
         console.log(
           `An error occurred whilst trying to opt ${currentContact.id} into mailing`
@@ -128,11 +179,6 @@ export const handler = async (
       }),
     };
   }
-
-  return {
-    statusCode: 500,
-    body: JSON.stringify({ reason: "An error occurred" }),
-  };
 };
 
 export const main = handler;
