@@ -9,9 +9,9 @@ const slugify = (input) => input
     .map((x) => x.trim())
     .join("-");
 const handler = async (handlerOptions) => {
-    console.log("====== STARTING =======");
+    console.log("====== INPUT =======");
     console.log({ handlerOptions });
-    console.log("====== DONE =======");
+    console.log("");
     if (handlerOptions.__ow_method === undefined ||
         handlerOptions.__ow_method.toLowerCase() !== "post") {
         return {

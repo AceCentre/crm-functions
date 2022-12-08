@@ -18,6 +18,7 @@ class SugarService {
         if (withAuth) {
             headers["Authorization"] = `Bearer ${this.token}`;
         }
+        console.log("===== REQ ======");
         console.log(Object.assign({ path }, reqBody));
         const { body, statusCode } = await (0, undici_1.request)(path, {
             method,
@@ -34,7 +35,9 @@ class SugarService {
         if (statusCode !== 200) {
             throw new Error(`Non 200 status given for path: ${path}. Status code: ${statusCode}, body: ${JSON.stringify(response)}`);
         }
+        console.log("===== RES =======");
         console.log({ response, path, method });
+        console.log("");
         return response;
     }
     async authenticate() {

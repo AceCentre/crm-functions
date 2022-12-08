@@ -32,9 +32,9 @@ const slugify = (input: string): string =>
 export const handler = async (
   handlerOptions: CreateContactHandlerOptions
 ): Promise<CreateContactHandlerResult> => {
-  console.log("====== STARTING =======");
+  console.log("====== INPUT =======");
   console.log({ handlerOptions });
-  console.log("====== DONE =======");
+  console.log("");
 
   if (
     handlerOptions.__ow_method === undefined ||

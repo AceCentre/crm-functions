@@ -33,6 +33,7 @@ export class SugarService {
       headers["Authorization"] = `Bearer ${this.token}`;
     }
 
+    console.log("===== REQ ======");
     console.log({ path, ...reqBody });
 
     const { body, statusCode } = await request(path, {
@@ -59,7 +60,9 @@ export class SugarService {
       );
     }
 
+    console.log("===== RES =======");
     console.log({ response, path, method });
+    console.log("");
 
     return response;
   }
