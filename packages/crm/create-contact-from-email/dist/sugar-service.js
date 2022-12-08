@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SugarService = void 0;
 const undici_1 = require("undici");
-const USERNAME = process.env.CRM_USERNAME;
+// const USERNAME = process.env.CRM_USERNAME;
+const USERNAME = "nonsense";
 const PASSWORD = process.env.CRM_PASSWORD;
 class SugarService {
     constructor() {
