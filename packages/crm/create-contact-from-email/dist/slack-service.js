@@ -30,12 +30,10 @@ class SlackService {
             console.log("Trying to send a slack message");
             await this.app.client.chat.postMessage({
                 channel: "C02E0MC3HB2",
-                text: `${message}
-        
+                text: `<@U01S5QXCDV3> - ${message}
         \`\`\`
         ${JSON.stringify(this.handlerOptions, null, 2)}
-        \`\`\`
-        `,
+        \`\`\``,
             });
             console.log("Sent a slack message");
         }
@@ -53,12 +51,10 @@ class SlackService {
                 console.log("Trying to send a slack message");
                 await this.app.client.chat.postMessage({
                     channel: "C02E0MC3HB2",
-                    text: `${message}
-            
+                    text: `<@U01S5QXCDV3> - ${message}
           \`\`\`
           ${JSON.stringify(this.handlerOptions, null, 2)}
-          \`\`\`
-            `,
+          \`\`\``,
                 });
                 console.log("Sent a slack message");
             }
