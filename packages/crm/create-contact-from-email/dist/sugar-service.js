@@ -18,6 +18,7 @@ class SugarService {
         if (withAuth) {
             headers["Authorization"] = `Bearer ${this.token}`;
         }
+        console.log(Object.assign({ path }, reqBody));
         const { body, statusCode } = await (0, undici_1.request)(path, {
             method,
             body: JSON.stringify(reqBody),
@@ -62,37 +63,78 @@ class SugarService {
         if (result && result.records && Array.isArray(result.records)) {
             return result.records
                 .map((record) => {
-                if (record.id && typeof record.id === "string") {
-                    return { id: record.id };
+                if (record &&
+                    record.id &&
+                    typeof record.id === "string" &&
+                    record.first_name &&
+                    typeof record.first_name === "string" &&
+                    record.last_name &&
+                    typeof record.last_name === "string" &&
+                    record.sign_up_form_location_c &&
+                    typeof record.sign_up_form_location_c === "string" &&
+                    record.email1 &&
+                    typeof record.email1 === "string" &&
+                    record.receives_newsletter_c &&
+                    typeof record.receives_newsletter_c === "boolean") {
+                    return {
+                        id: record.id,
+                        lastName: record.last_name,
+                        firstName: record.first_name,
+                        location: record.sign_up_form_location_c,
+                        email: record.email1,
+                        receivesNewsletter: record.receives_newsletter_c,
+                    };
                 }
-                return null;
             })
                 .filter((x) => x !== null);
         }
         throw new Error(`Got invalid response from ContactsByEmail: ${JSON.stringify(result)}`);
     }
-    async optInToMailing(contact) {
+    async updateContact(contact) {
         const optInPath = `${this.api}/Contacts/${contact.id}`;
         const result = await this.getBody(optInPath, "PUT", true, {
-            receives_newsletter_c: true,
+            first_name: contact.firstName,
+            last_name: contact.lastName,
+            email1: contact.email,
+            receives_newsletter_c: contact.receivesNewsletter,
+            sign_up_form_location_c: contact.location,
         });
-        if (result.receives_newsletter_c && result.receives_newsletter_c === true) {
+        if (result.id && result.id === contact.id) {
             return;
         }
         throw new Error(`Failed to correctly opt them into mailing: ${contact.id}`);
     }
-    async createNewContact(email) {
+    async createNewContact(newContact) {
         const createPath = `${this.api}/Contacts`;
         const result = await this.getBody(createPath, "POST", true, {
-            email1: email,
-            first_name: email,
-            last_name: "Unknown",
-            receives_newsletter_c: true,
+            email1: newContact.email,
+            first_name: newContact.firstName,
+            last_name: newContact.lastName,
+            receives_newsletter_c: newContact.receivesNewsletter,
         });
-        if (result && result.id && typeof result.id === "string") {
-            return { id: result.id };
+        if (result &&
+            result.id &&
+            typeof result.id === "string" &&
+            result.first_name &&
+            typeof result.first_name === "string" &&
+            result.last_name &&
+            typeof result.last_name === "string" &&
+            result.sign_up_form_location_c &&
+            typeof result.sign_up_form_location_c === "string" &&
+            result.email1 &&
+            typeof result.email1 === "string" &&
+            result.receives_newsletter_c &&
+            typeof result.receives_newsletter_c === "boolean") {
+            return {
+                id: result.id,
+                lastName: result.last_name,
+                firstName: result.first_name,
+                location: result.sign_up_form_location_c,
+                receivesNewsletter: result.receives_newsletter_c,
+                email: result.email1,
+            };
         }
-        throw new Error(`Failed to create a new contact: ${email}`);
+        throw new Error(`Failed to create a new contact: ${newContact.email}`);
     }
 }
 exports.SugarService = SugarService;
