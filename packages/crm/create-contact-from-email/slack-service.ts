@@ -25,7 +25,10 @@ export class SlackService {
       firstName: handlerOptions.firstName,
       lastName: handlerOptions.lastName,
     };
+
     if (!process.env.SLACK_TOKEN || !process.env.SLACK_SIGNING_TOKEN) {
+      console.log("NOT CONNECTING TO SLACK", process.env.SEND_SUCCESS);
+
       this.connected = false;
     } else {
       // Connect to slack
@@ -33,6 +36,11 @@ export class SlackService {
         token: process.env.SLACK_TOKEN,
         signingSecret: process.env.SLACK_SIGNING_TOKEN,
       });
+
+      console.log(
+        "CONNECTED TO SLACK, logging success:",
+        process.env.SEND_SUCCESS
+      );
 
       this.connected = true;
     }

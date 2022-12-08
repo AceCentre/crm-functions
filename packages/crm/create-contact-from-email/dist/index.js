@@ -34,7 +34,18 @@ const handler = async (handlerOptions) => {
         };
     }
     const crmService = new sugar_service_1.SugarService();
-    const slackService = new slack_service_1.SlackService(handlerOptions);
+    let slackService = null;
+    try {
+        slackService = new slack_service_1.SlackService(handlerOptions);
+    }
+    catch (err) {
+        console.log("Failed to connect to slack");
+        console.log(err);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ reason: "Failed to connect to slack" }),
+        };
+    }
     try {
         await crmService.authenticate();
     }
