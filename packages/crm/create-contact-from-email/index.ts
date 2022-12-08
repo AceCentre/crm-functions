@@ -16,8 +16,8 @@ const ALLOWED_PATHS = ["", "/"];
 type CreateContactHandlerOptions = {
   email?: string;
   location?: string;
-  firstName?: string;
-  lastName?: string;
+  firstname?: string;
+  lastname?: string;
 } & GenericHandlerOptions;
 
 type CreateContactHandlerResult = {} & GenericHandlerResult;
@@ -101,12 +101,12 @@ export const handler = async (
         unsavedContact.location = slugify(handlerOptions.location);
       }
 
-      if (handlerOptions.firstName) {
-        unsavedContact.firstName = handlerOptions.firstName;
+      if (handlerOptions.firstname) {
+        unsavedContact.firstName = handlerOptions.firstname;
       }
 
-      if (handlerOptions.lastName) {
-        unsavedContact.lastName = handlerOptions.lastName;
+      if (handlerOptions.lastname) {
+        unsavedContact.lastName = handlerOptions.lastname;
       }
 
       const newContact = await crmService.createNewContact(unsavedContact);
@@ -146,17 +146,17 @@ export const handler = async (
 
         if (
           currentContact.lastName.toLowerCase() === "unknown" &&
-          handlerOptions.lastName
+          handlerOptions.lastname
         ) {
-          updateContact.lastName = handlerOptions.lastName;
+          updateContact.lastName = handlerOptions.lastname;
         }
 
         if (
           currentContact.firstName.toLowerCase() ===
             currentContact.email.toLowerCase() &&
-          handlerOptions.firstName
+          handlerOptions.firstname
         ) {
-          updateContact.firstName = handlerOptions.firstName;
+          updateContact.firstName = handlerOptions.firstname;
         }
 
         await crmService.updateContact(updateContact);

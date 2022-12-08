@@ -52,13 +52,15 @@ content-type: application/json
 }
 
 ### Switch contact to recieve newsletter
-@idToSubscribe = da95208e-69ab-11ed-ae8a-00163ecfc8ed
+@idToSubscribe = ef33b95e-76ff-11ed-bcc7-00163ecfc8ed
 PUT {{ api }}/Contacts/{{ idToSubscribe }}
 Authorization: Bearer {{ authRequest.response.body.access_token }}
 content-type: application/json
 
 {
-    "receives_newsletter_c": true
+    "receives_newsletter_c": true,
+    "first_name":"Gavin",
+    "last_name":"Heh"
 }
 
 ### Request to DO 
@@ -67,5 +69,8 @@ POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-emai
 content-type: application/json
 
 {
-    "email": "fake@gavinhenderson.co.uk"
+    "email": "fake-1@gavinhenderson.co.uk",
+    "firstname": "Gavin",
+    "lastname": "Henderson",
+    "location": "REST"
 }

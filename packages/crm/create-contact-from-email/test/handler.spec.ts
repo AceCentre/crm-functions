@@ -627,8 +627,8 @@ describe("Names", () => {
       __ow_method: "post",
       __ow_path: "",
       email: "user-to-add@email.com",
-      firstName: "NewFirst",
-      lastName: "NewLast",
+      firstname: "NewFirst",
+      lastname: "NewLast",
     });
 
     expect(result).toEqual({
@@ -693,7 +693,7 @@ describe("Names", () => {
       __ow_method: "post",
       __ow_path: "",
       email: "user-to-add@email.com",
-      lastName: "NewLast",
+      lastname: "NewLast",
     });
 
     expect(result).toEqual({
@@ -759,7 +759,7 @@ describe("Names", () => {
       __ow_method: "post",
       __ow_path: "",
       email: "user-to-add@email.com",
-      firstName: "NewFirst",
+      firstname: "NewFirst",
     });
 
     expect(result).toEqual({
@@ -825,8 +825,8 @@ describe("Names", () => {
       __ow_method: "post",
       __ow_path: "",
       email: "user-to-add@email.com",
-      firstName: "NewFirst",
-      lastName: "NewLast",
+      firstname: "NewFirst",
+      lastname: "NewLast",
     });
 
     expect(result).toEqual({
@@ -941,8 +941,8 @@ describe("Names", () => {
       __ow_method: "post",
       __ow_path: "",
       email: "user-to-add@email.com",
-      firstName: "Gavin",
-      lastName: "Henderson",
+      firstname: "Gavin",
+      lastname: "Henderson",
     });
 
     expect(result).toEqual({
