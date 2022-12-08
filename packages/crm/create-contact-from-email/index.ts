@@ -1,10 +1,5 @@
+import { CreateContactHandlerOptions, SlackService } from "./slack-service";
 import { NewContact, SugarService, UpdateContact } from "./sugar-service";
-
-type GenericHandlerOptions = {
-  __ow_method?: string;
-  __ow_path?: string;
-  __ow_headers?: {};
-};
 
 type GenericHandlerResult = {
   statusCode?: number;
@@ -12,13 +7,6 @@ type GenericHandlerResult = {
 };
 
 const ALLOWED_PATHS = ["", "/"];
-
-type CreateContactHandlerOptions = {
-  email?: string;
-  location?: string;
-  firstName?: string;
-  lastName?: string;
-} & GenericHandlerOptions;
 
 type CreateContactHandlerResult = {} & GenericHandlerResult;
 
@@ -64,12 +52,18 @@ export const handler = async (
   }
 
   const crmService = new SugarService();
+  const slackService = new SlackService(handlerOptions);
 
   try {
     await crmService.authenticate();
   } catch (error) {
     console.log("An error occurred whilst authenticating to SugarCRM");
     console.log(error);
+
+    slackService.sendError(
+      "An error occurred whilst authenticating to SugarCRM"
+    );
+
     return {
       statusCode: 500,
       body: JSON.stringify({ reason: "Failed to authenticate to SugarCRM." }),
@@ -83,6 +77,11 @@ export const handler = async (
     );
   } catch (error) {
     console.log("An error occurred whilst trying to get contacts by email");
+
+    slackService.sendError(
+      "An error occurred whilst trying to get contacts by email"
+    );
+
     console.log(error);
     return {
       statusCode: 500,
@@ -119,12 +118,17 @@ export const handler = async (
       console.log(
         `An error occurred whilst trying to create a new contact for: ${handlerOptions.email}`
       );
+      slackService.sendError(
+        `An error occurred whilst trying to create a new contact for: ${handlerOptions.email}`
+      );
       console.log(error);
       return {
         statusCode: 500,
         body: JSON.stringify({ reason: "Failed to create a new contact." }),
       };
     }
+
+    slackService.sendSuccess(`Create a new contact for email.`);
 
     return {
       statusCode: 200,
@@ -168,6 +172,10 @@ export const handler = async (
         console.log(
           `An error occurred whilst trying to opt ${currentContact.id} into mailing`
         );
+
+        slackService.sendError(
+          `An error occurred whilst trying to opt ${currentContact.id} into mailing`
+        );
         console.log(error);
         return {
           statusCode: 500,
@@ -175,6 +183,10 @@ export const handler = async (
         };
       }
     }
+
+    slackService.sendSuccess(
+      `Updated ${listOfExistingContacts.length} existing contact`
+    );
 
     return {
       statusCode: 200,

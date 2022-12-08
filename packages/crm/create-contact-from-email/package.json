@@ -10,6 +10,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@slack/bolt": "^3.12.2",
     "undici": "^5.13.0"
   },
   "devDependencies": {

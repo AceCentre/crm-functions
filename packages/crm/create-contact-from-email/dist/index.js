@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.handler = void 0;
+const slack_service_1 = require("./slack-service");
 const sugar_service_1 = require("./sugar-service");
 const ALLOWED_PATHS = ["", "/"];
 const slugify = (input) => input
@@ -33,12 +34,14 @@ const handler = async (handlerOptions) => {
         };
     }
     const crmService = new sugar_service_1.SugarService();
+    const slackService = new slack_service_1.SlackService(handlerOptions);
     try {
         await crmService.authenticate();
     }
     catch (error) {
         console.log("An error occurred whilst authenticating to SugarCRM");
         console.log(error);
+        slackService.sendError("An error occurred whilst authenticating to SugarCRM");
         return {
             statusCode: 500,
             body: JSON.stringify({ reason: "Failed to authenticate to SugarCRM." }),
@@ -50,6 +53,7 @@ const handler = async (handlerOptions) => {
     }
     catch (error) {
         console.log("An error occurred whilst trying to get contacts by email");
+        slackService.sendError("An error occurred whilst trying to get contacts by email");
         console.log(error);
         return {
             statusCode: 500,
@@ -79,12 +83,14 @@ const handler = async (handlerOptions) => {
         }
         catch (error) {
             console.log(`An error occurred whilst trying to create a new contact for: ${handlerOptions.email}`);
+            slackService.sendError(`An error occurred whilst trying to create a new contact for: ${handlerOptions.email}`);
             console.log(error);
             return {
                 statusCode: 500,
                 body: JSON.stringify({ reason: "Failed to create a new contact." }),
             };
         }
+        slackService.sendSuccess(`Create a new contact for email.`);
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Create a new contact for email." }),
@@ -115,6 +121,7 @@ const handler = async (handlerOptions) => {
             }
             catch (error) {
                 console.log(`An error occurred whilst trying to opt ${currentContact.id} into mailing`);
+                slackService.sendError(`An error occurred whilst trying to opt ${currentContact.id} into mailing`);
                 console.log(error);
                 return {
                     statusCode: 500,
@@ -122,6 +129,7 @@ const handler = async (handlerOptions) => {
                 };
             }
         }
+        slackService.sendSuccess(`Updated ${listOfExistingContacts.length} existing contact`);
         return {
             statusCode: 200,
             body: JSON.stringify({
