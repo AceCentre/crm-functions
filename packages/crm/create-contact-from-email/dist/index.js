@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.handler = void 0;
-const slack_service_1 = require("./slack-service");
-const sugar_service_1 = require("./sugar-service");
+const shared_1 = require("shared");
 const ALLOWED_PATHS = ["", "/"];
 const slugify = (input) => input
     .toLowerCase()
@@ -33,10 +32,10 @@ const handler = async (handlerOptions) => {
             body: JSON.stringify({ reason: "No email provided" }),
         };
     }
-    const crmService = new sugar_service_1.SugarService();
+    const crmService = new shared_1.SugarService();
     let slackService = null;
     try {
-        slackService = new slack_service_1.SlackService(handlerOptions);
+        slackService = new shared_1.SlackService(handlerOptions);
     }
     catch (err) {
         console.log("Failed to connect to slack");
