@@ -1,4 +1,5 @@
 import { request } from "undici";
+import { Contact, NewContact, UpdateContact } from "./types";
 
 const USERNAME = process.env.CRM_USERNAME;
 const PASSWORD = process.env.CRM_PASSWORD;
@@ -194,29 +195,3 @@ export class SugarService {
     throw new Error(`Failed to create a new contact: ${newContact.email}`);
   }
 }
-
-export type UpdateContact = {
-  id: string;
-  location?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  receivesNewsletter?: boolean;
-};
-
-export type NewContact = {
-  location?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  receivesNewsletter?: boolean;
-};
-
-export type Contact = {
-  id: string;
-  location: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  receivesNewsletter: boolean;
-};

@@ -1,38 +1,28 @@
 import { App } from "@slack/bolt";
 
-export type GenericHandlerOptions = {
-  __ow_method?: string;
-  __ow_path?: string;
-  __ow_headers?: {};
-};
-
-export type CreateContactHandlerOptions = {
-  email?: string;
-  location?: string;
-  firstName?: string;
-  lastName?: string;
-} & GenericHandlerOptions;
+const INPUT_KEYS = ["email", "location", "firstName", "lastName"];
 
 export class SlackService {
   connected: boolean;
-  handlerOptions: CreateContactHandlerOptions;
+  debugInfo: { [key: string]: any };
   app: any;
 
-  constructor(handlerOptions: CreateContactHandlerOptions) {
-    this.handlerOptions = {
-      email: handlerOptions.email,
-      location: handlerOptions.location,
-      firstName: handlerOptions.firstName,
-      lastName: handlerOptions.lastName,
-    };
+  constructor(debugInfo: { [key: string]: any } = {}) {
+    this.debugInfo = {};
 
+    for (const key of INPUT_KEYS) {
+      this.debugInfo[key] = debugInfo[key] || null;
+    }
+  }
+
+  async connect() {
     if (!process.env.SLACK_TOKEN || !process.env.SLACK_SIGNING_TOKEN) {
       console.log("NOT CONNECTING TO SLACK", process.env.SEND_SUCCESS);
 
       this.connected = false;
     } else {
       // Connect to slack
-      this.app = new App({
+      this.app = await new App({
         token: process.env.SLACK_TOKEN,
         signingSecret: process.env.SLACK_SIGNING_TOKEN,
       });
@@ -54,14 +44,14 @@ export class SlackService {
         channel: "C02E0MC3HB2",
         text: `<@U01S5QXCDV3> - ${message}
         \`\`\`
-        ${JSON.stringify(this.handlerOptions, null, 2)}
+        ${JSON.stringify(this.debugInfo, null, 2)}
         \`\`\``,
       });
       console.log("Sent a slack message");
     } else {
       console.error("==== NOT CONNECTED TO SLACK (ERR) ====");
       console.error(message);
-      console.error(JSON.stringify(this.handlerOptions, null, 2));
+      console.error(JSON.stringify(this.debugInfo, null, 2));
       console.log("");
     }
   }
@@ -75,14 +65,14 @@ export class SlackService {
           channel: "C02E0MC3HB2",
           text: `<@U01S5QXCDV3> - ${message}
           \`\`\`
-          ${JSON.stringify(this.handlerOptions, null, 2)}
+          ${JSON.stringify(this.debugInfo, null, 2)}
           \`\`\``,
         });
         console.log("Sent a slack message");
       } else {
         console.log("==== NOT CONNECTED TO SLACK (SUC) ====");
         console.log(message);
-        console.error(JSON.stringify(this.handlerOptions, null, 2));
+        console.error(JSON.stringify(this.debugInfo, null, 2));
         console.log("");
       }
     }
