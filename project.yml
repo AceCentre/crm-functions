@@ -7,7 +7,7 @@ packages:
       SLACK_SIGNING_TOKEN: "${SLACK_SIGNING_TOKEN}"
       SEND_SUCCESS: "${SEND_SUCCESS}"
     actions:
-      - name: create-contact-from-email
+      - name: crm-functions
         runtime: "nodejs:default"
         limits:
           timeout: 120000

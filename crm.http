@@ -63,8 +63,7 @@ content-type: application/json
 
 ### Request to DO 
 
-POST https://crm-connector-k7gic.ondigitalocean.app/crm/create-contact-from-email
-content-type: application/json
+POST https://crm-connector-k7gic.ondigitalocean.app/crm/crm-functions
 
 {
     "email": "fake@gavinhenderson.co.uk"
