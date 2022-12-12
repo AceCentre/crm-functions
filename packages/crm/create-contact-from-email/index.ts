@@ -1,10 +1,5 @@
-import {
-  CreateContactHandlerOptions,
-  SlackService,
-  NewContact,
-  SugarService,
-  UpdateContact,
-} from "shared";
+import { CreateContactHandlerOptions, SlackService } from "./slack-service";
+import { NewContact, SugarService, UpdateContact } from "./sugar-service";
 
 type GenericHandlerResult = {
   statusCode?: number;

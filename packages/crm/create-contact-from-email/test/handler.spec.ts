@@ -1,7 +1,7 @@
 import { main } from "../index";
-import { SugarService } from "shared";
+import { SugarService } from "../sugar-service";
 
-jest.mock("shared");
+jest.mock("../sugar-service");
 
 beforeEach(() => {
   // Clear all instances and calls to constructor and all methods:
