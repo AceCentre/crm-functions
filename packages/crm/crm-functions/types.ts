@@ -38,3 +38,14 @@ export type HandlerResult = {
   statusCode: number;
   body: string;
 };
+
+export type SugarEvent = {
+  id: string;
+  webpage: string;
+  name: string;
+};
+
+export type EventAttendance = {
+  id: string;
+  name: string;
+};
