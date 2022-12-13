@@ -21,8 +21,20 @@ content-type: application/json
 
 ### Get contacts (only 20)
 
-GET {{ api }}/Contacts
+GET {{ api }}/Contacts?max_num=999999
 Authorization: Bearer {{ authRequest.response.body.access_token }}
+
+### Get events (only 20)
+
+GET {{ api }}/cours_Event?max_num=999999
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+
+### Get eventsattendances (only 20)
+
+GET {{ api }}/cours_EventAttendance?max_num=999999
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+
+
 
 ### Filter contacts by email, with results
 @emailToFind = testing-api-7628537@gavinhenderson.co.uk
@@ -51,6 +63,21 @@ content-type: application/json
     "receives_newsletter_c": false
 }
 
+### Create event attendence
+POST {{ api }}/cours_EventAttendance
+Authorization: Bearer {{ authRequest.response.body.access_token }}
+content-type: application/json
+
+{
+    "name": "temp test",
+    "cours_eventattendance_contacts": {
+        "add": ["0bd2f8e8-7a36-11ed-8822-00163ecfc8ed"]
+    },
+    "cours_event_cours_eventattendance": {
+        "add": ["3df50498-507d-11ed-988e-00163ecfc8ed"]
+    }
+}
+
 ### Switch contact to recieve newsletter
 @idToSubscribe = da95208e-69ab-11ed-ae8a-00163ecfc8ed
 PUT {{ api }}/Contacts/{{ idToSubscribe }}
@@ -64,7 +91,19 @@ content-type: application/json
 ### Request to DO 
 
 POST https://crm-connector-k7gic.ondigitalocean.app/crm/crm-functions
+Content-Type: application/json
 
 {
-    "email": "fake@gavinhenderson.co.uk"
+    "email": "fake@gavinhenderson.co.uk",
+    "method": "add-to-newsletter",
+    "location": "rest"
+}
+
+### Request to DO 
+
+POST https://crm-connector-k7gic.ondigitalocean.app/crm/crm-functions
+Content-Type: application/json
+
+{
+    "method": "add-to-course"
 }
