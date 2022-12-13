@@ -1,6 +1,6 @@
 import { App } from "@slack/bolt";
 
-const INPUT_KEYS = ["email", "location", "firstName", "lastName"];
+const INPUT_KEYS = ["email", "location", "firstName", "lastName", "eventSlug"];
 
 export class SlackService {
   connected: boolean;
