@@ -9,6 +9,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
 
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
@@ -61,6 +67,13 @@ describe("addToNewsLetter", () => {
         api: "api",
         token: "token",
 
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
+
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -112,6 +125,13 @@ describe("addToNewsLetter", () => {
         api: "api",
         token: "token",
 
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
+
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -155,7 +175,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
 
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -228,6 +253,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -285,6 +316,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -340,6 +377,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -387,6 +430,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -447,6 +496,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -510,6 +565,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -572,6 +633,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -633,6 +700,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -693,6 +766,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -762,6 +841,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
@@ -814,6 +899,12 @@ describe("addToNewsLetter", () => {
         hostname: "hostname",
         api: "api",
         token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
         getBody: jest.fn(() => {
           return Promise.resolve({ result: true });
         }),
