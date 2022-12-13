@@ -1,3 +1,4 @@
+import { addToCourse } from "./add-to-course";
 import { addToNewsletter } from "./add-to-newsletter";
 import { SlackService } from "./slack-service";
 import { SugarService } from "./sugar-service";
@@ -17,11 +18,14 @@ export const handler = async (
     return { statusCode: 404, body: JSON.stringify({ reason }) };
   }
 
-  const crmService = new SugarService();
+  const crmService = new SugarService({
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
+  });
   const slackService = new SlackService(handlerOptions);
 
   try {
-    slackService.connect();
+    await slackService.connect();
   } catch (err) {
     console.log("Failed to connect to slack");
     console.log(err);
@@ -37,10 +41,7 @@ export const handler = async (
   }
 
   if (handlerOptions.method === "add-to-course") {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ reason: "Not yet implemented" }),
-    };
+    return await addToCourse(handlerOptions, crmService, slackService);
   }
 
   return {
