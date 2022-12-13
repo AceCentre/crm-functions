@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SugarService = void 0;
 const undici_1 = require("undici");
-const USERNAME = process.env.CRM_USERNAME;
-const PASSWORD = process.env.CRM_PASSWORD;
 class SugarService {
-    constructor() {
+    constructor({ username, password }) {
         this.hostname = "https://ace.acrm.accessacloud.com";
         this.apiPath = "/rest/v10";
         this.api = `${this.hostname}${this.apiPath}`;
+        this.username = username;
+        this.password = password;
     }
     async getBody(path, method, withAuth = true, reqBody = {}) {
         if (withAuth && this.token === undefined) {
@@ -45,8 +45,8 @@ class SugarService {
         const reqBody = {
             grant_type: "password",
             client_id: "sugar",
-            username: USERNAME,
-            password: PASSWORD,
+            username: this.username,
+            password: this.password,
             platform: "custom-crm-connector",
         };
         const result = await this.getBody(authPath, "POST", false, reqBody);
@@ -59,6 +59,77 @@ class SugarService {
         else {
             throw new Error(`Failed to authenticate, response given: ${JSON.stringify(result)}`);
         }
+    }
+    async createEventAttendance(event, contact) {
+        const createEventAttendancePath = `${this.api}/cours_EventAttendance`;
+        const result = await this.getBody(createEventAttendancePath, "POST", true, {
+            name: `${contact.email} - ${event.name}`,
+            cours_eventattendance_contacts: {
+                add: [contact.id],
+            },
+            cours_event_cours_eventattendance: {
+                add: [event.id],
+            },
+        });
+        if (result &&
+            result.id !== undefined &&
+            typeof result.id === "string" &&
+            result.name !== undefined &&
+            typeof result.name === "string") {
+            return { id: result.id, name: result.name };
+        }
+        throw new Error("Did not create event attendance");
+    }
+    async getEventAttendances(contact, event) {
+        const contactsPath = `${this.api}/cours_EventAttendance?filter=[{"cours_event_cours_eventattendancecours_event_ida":"${event.id}","cours_eventattendance_contactscontacts_ida":"${contact.id}"}]`;
+        const result = await this.getBody(contactsPath, "GET", true);
+        if (result && result.records && Array.isArray(result.records)) {
+            return result.records
+                .map((record) => {
+                if (record &&
+                    record.id !== undefined &&
+                    typeof record.id === "string" &&
+                    record.name !== undefined &&
+                    typeof record.name === "string") {
+                    return {
+                        id: record.id,
+                        name: record.name,
+                    };
+                }
+                else {
+                    return null;
+                }
+            })
+                .filter((x) => x !== null);
+        }
+        throw new Error(`Got invalid response from getEventAttendances: ${JSON.stringify(result)}`);
+    }
+    async getAllEvents() {
+        const allEventsPath = `${this.api}/cours_Event?max_num=999999`;
+        const result = await this.getBody(allEventsPath, "GET", true);
+        if (result && result.records && Array.isArray(result.records)) {
+            return result.records
+                .map((record) => {
+                if (record &&
+                    record.id !== undefined &&
+                    typeof record.id === "string" &&
+                    record.webpage_c !== undefined &&
+                    typeof record.webpage_c === "string" &&
+                    record.name !== undefined &&
+                    typeof record.name === "string") {
+                    return {
+                        id: record.id,
+                        webpage: record.webpage_c,
+                        name: record.name,
+                    };
+                }
+                else {
+                    return null;
+                }
+            })
+                .filter((x) => x !== null);
+        }
+        throw new Error(`Got invalid response from getAllEvents: ${JSON.stringify(result)}`);
     }
     async getContactsByEmail(email) {
         const contactsPath = `${this.api}/Contacts?filter=[{"email": "${email}" }]`;

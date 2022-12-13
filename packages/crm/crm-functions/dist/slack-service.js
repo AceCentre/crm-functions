@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SlackService = void 0;
 const bolt_1 = require("@slack/bolt");
-const INPUT_KEYS = ["email", "location", "firstName", "lastName"];
+const INPUT_KEYS = ["email", "location", "firstName", "lastName", "eventSlug"];
 class SlackService {
     constructor(debugInfo = {}) {
         this.debugInfo = {};

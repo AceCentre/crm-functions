@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.handler = void 0;
+const add_to_course_1 = require("./add-to-course");
 const add_to_newsletter_1 = require("./add-to-newsletter");
 const slack_service_1 = require("./slack-service");
 const sugar_service_1 = require("./sugar-service");
@@ -13,10 +14,13 @@ const handler = async (handlerOptions) => {
     if (!valid) {
         return { statusCode: 404, body: JSON.stringify({ reason }) };
     }
-    const crmService = new sugar_service_1.SugarService();
+    const crmService = new sugar_service_1.SugarService({
+        username: process.env.USERNAME,
+        password: process.env.PASSWORD,
+    });
     const slackService = new slack_service_1.SlackService(handlerOptions);
     try {
-        slackService.connect();
+        await slackService.connect();
     }
     catch (err) {
         console.log("Failed to connect to slack");
@@ -30,10 +34,7 @@ const handler = async (handlerOptions) => {
         return await (0, add_to_newsletter_1.addToNewsletter)(handlerOptions, crmService, slackService);
     }
     if (handlerOptions.method === "add-to-course") {
-        return {
-            statusCode: 404,
-            body: JSON.stringify({ reason: "Not yet implemented" }),
-        };
+        return await (0, add_to_course_1.addToCourse)(handlerOptions, crmService, slackService);
     }
     return {
         statusCode: 404,
