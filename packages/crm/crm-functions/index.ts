@@ -19,8 +19,8 @@ export const handler = async (
   }
 
   const crmService = new SugarService({
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
+    username: process.env.CRM_USERNAME,
+    password: process.env.CRM_PASSWORD,
   });
   const slackService = new SlackService(handlerOptions);
 

@@ -15,8 +15,8 @@ const handler = async (handlerOptions) => {
         return { statusCode: 404, body: JSON.stringify({ reason }) };
     }
     const crmService = new sugar_service_1.SugarService({
-        username: process.env.USERNAME,
-        password: process.env.PASSWORD,
+        username: process.env.CRM_USERNAME,
+        password: process.env.CRM_PASSWORD,
     });
     const slackService = new slack_service_1.SlackService(handlerOptions);
     try {

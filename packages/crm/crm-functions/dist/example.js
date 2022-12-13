@@ -28,8 +28,8 @@ const sugar_service_1 = require("./sugar-service");
 dotenv.config();
 (async () => {
     const crm = new sugar_service_1.SugarService({
-        username: process.env.USERNAME,
-        password: process.env.PASSWORD,
+        username: process.env.CRM_USERNAME,
+        password: process.env.CRM_PASSWORD,
     });
     await crm.authenticate();
     const events = await crm.getAllEvents();

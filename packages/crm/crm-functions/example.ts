@@ -4,8 +4,8 @@ dotenv.config();
 
 (async () => {
   const crm = new SugarService({
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
+    username: process.env.CRM_USERNAME,
+    password: process.env.CRM_PASSWORD,
   });
   await crm.authenticate();
 
