@@ -1,9 +1,11 @@
 import { addToCourse } from "../add-to-course";
-import { SlackService } from "../slack-service";
+import { Logger } from "../logger";
 
 describe("addToCourse", () => {
   test("Email is required", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -42,16 +44,17 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
-    const result = await addToCourse({ email: undefined }, crmService, slack);
+    const result = await addToCourse({ email: undefined }, crmService, logger);
 
     expect(result.statusCode).toBe(500);
     expect(result.body).toBe('{"reason":"No email provided"}');
   });
 
   test("Course name is required", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -90,12 +93,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: undefined },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -103,7 +105,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if the CRM can't authenticate", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -142,12 +146,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -157,7 +160,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if the CRM can't return events", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -198,12 +203,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -211,7 +215,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if there are too many matching events", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -255,12 +261,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(404);
@@ -270,7 +275,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if there are too few matching events", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -311,12 +318,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(404);
@@ -326,7 +332,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if it cannot get the contacts", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -369,12 +377,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -382,7 +389,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if there are too many contacts", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -442,12 +451,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -457,7 +465,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if it can't create a contact", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -493,12 +503,11 @@ describe("addToCourse", () => {
         throw new Error("Uh oh");
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -506,7 +515,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if the event attendance already exists", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -560,12 +571,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -575,7 +585,9 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if it cannot create the event attendance", async () => {
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -631,12 +643,11 @@ describe("addToCourse", () => {
         });
       }),
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(result.statusCode).toBe(500);
@@ -655,7 +666,9 @@ describe("addToCourse", () => {
       });
     });
 
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -693,12 +706,11 @@ describe("addToCourse", () => {
 
       createNewContact,
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(createNewContact).toBeCalledTimes(1);
@@ -731,7 +743,9 @@ describe("addToCourse", () => {
       return Promise.resolve({ id: "123", name: "123" });
     });
 
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -776,12 +790,11 @@ describe("addToCourse", () => {
 
       createNewContact,
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       { email: "email@email.com", eventSlug: "new-product" },
       crmService,
-      slack
+      logger
     );
 
     expect(createNewContact).toBeCalledTimes(0);
@@ -815,7 +828,9 @@ describe("addToCourse", () => {
       });
     });
 
+    const logger = new Logger();
     const crmService = {
+      logger,
       apiPath: "apiPath",
       hostname: "hostname",
       api: "api",
@@ -853,7 +868,6 @@ describe("addToCourse", () => {
 
       createNewContact,
     };
-    const slack = new SlackService();
 
     const result = await addToCourse(
       {
@@ -863,7 +877,7 @@ describe("addToCourse", () => {
         lastName: "Last Name",
       },
       crmService,
-      slack
+      logger
     );
 
     expect(createNewContact).toBeCalledTimes(1);

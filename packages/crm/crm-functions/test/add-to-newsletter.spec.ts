@@ -1,10 +1,12 @@
 import { addToNewsletter } from "../add-to-newsletter";
-import { SlackService } from "../slack-service";
+import { Logger } from "../logger";
 
 describe("addToNewsLetter", () => {
   describe("Handles Sugar errors", () => {
     test("Returns 500 when Sugar can't authenticate the user", async () => {
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -44,14 +46,12 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
         },
         crmService,
-        slackService
+        logger
       );
 
       expect(result).toEqual({
@@ -61,7 +61,9 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 when Sugar can't get contacts", async () => {
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -102,14 +104,12 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
         },
         crmService,
-        slackService
+        logger
       );
 
       expect(result).toEqual({
@@ -119,7 +119,9 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 when Sugar can't create a new contact", async () => {
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -153,14 +155,12 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
         },
         crmService,
-        slackService
+        logger
       );
 
       expect(result).toEqual({
@@ -170,7 +170,9 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 when Sugar can't opt a user in", async () => {
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -218,14 +220,12 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
         },
         crmService,
-        slackService
+        logger
       );
 
       expect(result).toEqual({
@@ -235,7 +235,9 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 if you don't given an email", async () => {
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -283,9 +285,7 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
-      const result = await addToNewsletter({}, crmService, slackService);
+      const result = await addToNewsletter({}, crmService, logger);
 
       expect(result).toEqual({
         statusCode: 500,
@@ -307,7 +307,9 @@ describe("addToNewsLetter", () => {
         });
       });
 
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -333,15 +335,13 @@ describe("addToNewsLetter", () => {
         createNewContact,
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
           location: "test-location",
         },
         crmService,
-        slackService
+        logger
       );
 
       expect(result).toEqual({
@@ -370,7 +370,9 @@ describe("addToNewsLetter", () => {
         });
       });
 
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -396,15 +398,13 @@ describe("addToNewsLetter", () => {
         createNewContact,
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
           location: "Non Slugged test",
         },
         crmService,
-        slackService
+        logger
       );
 
       expect(result).toEqual({
@@ -431,7 +431,9 @@ describe("addToNewsLetter", () => {
           email: "",
         });
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -457,15 +459,13 @@ describe("addToNewsLetter", () => {
         createNewContact,
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
           location: "",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -484,7 +484,9 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -525,7 +527,6 @@ describe("addToNewsLetter", () => {
           });
         }),
       };
-      const slackService = new SlackService();
 
       const result = await addToNewsletter(
         {
@@ -533,7 +534,7 @@ describe("addToNewsLetter", () => {
           location: "overwrite",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -550,7 +551,9 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -592,15 +595,13 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
           location: "overwrite",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -619,7 +620,9 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -661,8 +664,6 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
@@ -670,7 +671,7 @@ describe("addToNewsLetter", () => {
           lastName: "NewLast",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -687,7 +688,9 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -729,15 +732,13 @@ describe("addToNewsLetter", () => {
         }),
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
           lastName: "NewLast",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -754,7 +755,9 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -795,7 +798,6 @@ describe("addToNewsLetter", () => {
           });
         }),
       };
-      const slackService = new SlackService();
 
       const result = await addToNewsletter(
         {
@@ -803,7 +805,7 @@ describe("addToNewsLetter", () => {
           firstName: "NewFirst",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -820,7 +822,9 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -861,7 +865,6 @@ describe("addToNewsLetter", () => {
           });
         }),
       };
-      const slackService = new SlackService();
 
       const result = await addToNewsletter(
         {
@@ -870,7 +873,7 @@ describe("addToNewsLetter", () => {
           lastName: "NewLast",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -895,7 +898,9 @@ describe("addToNewsLetter", () => {
           email: "",
         });
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -921,14 +926,12 @@ describe("addToNewsLetter", () => {
         createNewContact,
       };
 
-      const slackService = new SlackService();
-
       const result = await addToNewsletter(
         {
           email: "user-to-add@email.com",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
@@ -953,7 +956,9 @@ describe("addToNewsLetter", () => {
           email: "",
         });
       });
+      const logger = new Logger();
       const crmService = {
+        logger,
         apiPath: "apiPath",
         hostname: "hostname",
         api: "api",
@@ -978,7 +983,6 @@ describe("addToNewsLetter", () => {
         }),
         createNewContact,
       };
-      const slackService = new SlackService();
 
       const result = await addToNewsletter(
         {
@@ -987,7 +991,7 @@ describe("addToNewsLetter", () => {
           lastName: "Henderson",
         },
         crmService,
-        slackService
+        logger
       );
       expect(result).toEqual({
         statusCode: 200,
