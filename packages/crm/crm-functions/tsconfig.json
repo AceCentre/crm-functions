@@ -9,5 +9,6 @@
     "sourceMap": false,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "files": ["index.ts"],
+  "exclude": ["node_modules"]
 }
