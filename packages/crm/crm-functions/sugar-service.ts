@@ -1,4 +1,5 @@
 import { request } from "undici";
+import { Logger } from "./logger";
 import {
   Contact,
   EventAttendance,
@@ -14,13 +15,18 @@ export class SugarService {
   token?: string;
   username: string;
   password: string;
+  logger: Logger;
 
-  constructor({ username, password }: { username: string; password: string }) {
+  constructor(
+    { username, password }: { username: string; password: string },
+    logger: Logger
+  ) {
     this.hostname = "https://ace.acrm.accessacloud.com";
     this.apiPath = "/rest/v10";
     this.api = `${this.hostname}${this.apiPath}`;
     this.username = username;
     this.password = password;
+    this.logger = logger;
   }
 
   async getBody(
@@ -41,8 +47,7 @@ export class SugarService {
       headers["Authorization"] = `Bearer ${this.token}`;
     }
 
-    console.log("===== REQ ======");
-    console.log({ path, ...reqBody });
+    this.logger.info("Sending Request: ", { path, ...reqBody });
 
     const { body, statusCode } = await request(path, {
       method,
@@ -68,9 +73,7 @@ export class SugarService {
       );
     }
 
-    console.log("===== RES =======");
-    console.log({ response, path, method });
-    console.log("");
+    this.logger.info("Response: ", { response, path, method });
 
     return response;
   }

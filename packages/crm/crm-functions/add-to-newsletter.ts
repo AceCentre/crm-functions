@@ -1,4 +1,4 @@
-import { SlackService } from "./slack-service";
+import { Logger } from "./logger";
 import { slugify } from "./slugify";
 import { SugarService } from "./sugar-service";
 import {
@@ -51,7 +51,7 @@ const validateInput = (input: {
 export const addToNewsletter = async (
   handlerInput: HandlerInput,
   crmService: SugarService,
-  slackService: SlackService
+  logger: Logger
 ): Promise<HandlerResult> => {
   const { validatedInput, valid, reason } = validateInput(handlerInput);
 
@@ -65,12 +65,7 @@ export const addToNewsletter = async (
   try {
     await crmService.authenticate();
   } catch (error) {
-    console.log("An error occurred whilst authenticating to SugarCRM");
-    console.log(error);
-
-    slackService.sendError(
-      "An error occurred whilst authenticating to SugarCRM"
-    );
+    logger.error("An error occurred whilst authenticating to SugarCRM", error);
 
     return {
       statusCode: 500,
@@ -84,13 +79,11 @@ export const addToNewsletter = async (
       validatedInput.email
     );
   } catch (error) {
-    console.log("An error occurred whilst trying to get contacts by email");
-
-    slackService.sendError(
-      "An error occurred whilst trying to get contacts by email"
+    logger.error(
+      "An error occurred whilst trying to get contacts by email",
+      error
     );
 
-    console.log(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ reason: "Failed to get contacts by email." }),
@@ -98,8 +91,6 @@ export const addToNewsletter = async (
   }
 
   if (listOfExistingContacts.length === 0) {
-    console.log("No existing contacts found for:", validatedInput.email);
-
     try {
       let unsavedContact: NewContact = {
         email: validatedInput.email,
@@ -120,36 +111,25 @@ export const addToNewsletter = async (
         unsavedContact.lastName = validatedInput.lastName;
       }
 
-      const newContact = await crmService.createNewContact(unsavedContact);
-      console.log("Successfully created new contact", newContact.id);
+      await crmService.createNewContact(unsavedContact);
     } catch (error) {
-      console.log(
-        `An error occurred whilst trying to create a new contact for: ${validatedInput.email}`
+      logger.error(
+        `An error occurred whilst trying to create a new contact for: ${validatedInput.email}`,
+        error
       );
-      slackService.sendError(
-        `An error occurred whilst trying to create a new contact for: ${validatedInput.email}`
-      );
-      console.log(error);
+
       return {
         statusCode: 500,
         body: JSON.stringify({ reason: "Failed to create a new contact." }),
       };
     }
 
-    slackService.sendSuccess(`Create a new contact for email.`);
-
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Create a new contact for email." }),
     };
   } else {
-    console.log(
-      `Found ${listOfExistingContacts.length} contact(s) for email ${validatedInput.email}`
-    );
-
     for (const currentContact of listOfExistingContacts) {
-      console.log("Opting into mailing for contact:", currentContact.id);
-
       try {
         let updateContact: UpdateContact = {
           id: currentContact.id,
@@ -177,24 +157,17 @@ export const addToNewsletter = async (
 
         await crmService.updateContact(updateContact);
       } catch (error) {
-        console.log(
-          `An error occurred whilst trying to opt ${currentContact.id} into mailing`
+        logger.error(
+          `An error occurred whilst trying to opt ${currentContact.id} into mailing`,
+          error
         );
 
-        slackService.sendError(
-          `An error occurred whilst trying to opt ${currentContact.id} into mailing`
-        );
-        console.log(error);
         return {
           statusCode: 500,
           body: JSON.stringify({ reason: "Failed to opt user into mailing." }),
         };
       }
     }
-
-    slackService.sendSuccess(
-      `Updated ${listOfExistingContacts.length} existing contact`
-    );
 
     return {
       statusCode: 200,

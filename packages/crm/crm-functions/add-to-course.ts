@@ -1,4 +1,4 @@
-import { SlackService } from "./slack-service";
+import { Logger } from "./logger";
 import { SugarService } from "./sugar-service";
 import {
   Contact,
@@ -52,11 +52,13 @@ const validateInput = (input: {
 export const addToCourse = async (
   handlerInput: HandlerInput,
   crmService: SugarService,
-  slackService: SlackService
+  logger: Logger
 ): Promise<HandlerResult> => {
   const { validatedInput, valid, reason } = validateInput(handlerInput);
 
   if (!valid || !validateInput) {
+    logger.error("An invalid input was given");
+
     return {
       statusCode: 500,
       body: JSON.stringify({ reason: reason }),
@@ -66,12 +68,7 @@ export const addToCourse = async (
   try {
     await crmService.authenticate();
   } catch (error) {
-    console.log("An error occurred whilst authenticating to SugarCRM");
-    console.log(error);
-
-    slackService.sendError(
-      "An error occurred whilst authenticating to SugarCRM"
-    );
+    logger.error("An error occurred whilst authenticating to SugarCRM.", error);
 
     return {
       statusCode: 500,
@@ -84,13 +81,7 @@ export const addToCourse = async (
   try {
     events = await crmService.getAllEvents();
   } catch (error) {
-    console.log(
-      "An error occurred whilst trying to get all the events from CRM"
-    );
-    slackService.sendError(
-      "An error occurred whilst trying to get all events."
-    );
-    console.log(error);
+    logger.error("An error occurred whilst trying to get all events.", error);
 
     return {
       statusCode: 500,
@@ -104,7 +95,7 @@ export const addToCourse = async (
   );
 
   if (matchingEvents.length !== 1) {
-    slackService.sendError(
+    logger.error(
       `You gave an an event slug tht we couldn't find or found too many events for (${matchingEvents.length})`
     );
 
@@ -125,13 +116,11 @@ export const addToCourse = async (
       validatedInput.email
     );
   } catch (error) {
-    console.log("An error occurred whilst trying to get contacts by email");
-
-    slackService.sendError(
-      "An error occurred whilst trying to get contacts by email"
+    logger.error(
+      "An error occurred whilst trying to get contacts by email",
+      error
     );
 
-    console.log(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ reason: "Failed to get contacts by email." }),
@@ -140,11 +129,7 @@ export const addToCourse = async (
 
   // Bail if there are multiple contacts
   if (listOfExistingContacts.length > 1) {
-    console.log(
-      `There are too many (${listOfExistingContacts.length}) contacts for the email address: ${validatedInput.email}`
-    );
-
-    slackService.sendError(
+    logger.error(
       `There are too many (${listOfExistingContacts.length}) contacts for the email address: ${validatedInput.email}`
     );
 
@@ -179,15 +164,12 @@ export const addToCourse = async (
       }
 
       contact = await crmService.createNewContact(unsavedContact);
-      console.log("Successfully created new contact", contact.id);
     } catch (error) {
-      console.log(
-        `An error occurred whilst trying to create a new contact for: ${validatedInput.email}`
+      logger.error(
+        `An error occurred whilst trying to create a new contact for: ${validatedInput.email}`,
+        error
       );
-      slackService.sendError(
-        `An error occurred whilst trying to create a new contact for: ${validatedInput.email}`
-      );
-      console.log(error);
+
       return {
         statusCode: 500,
         body: JSON.stringify({ reason: "Failed to create a new contact." }),
@@ -199,10 +181,7 @@ export const addToCourse = async (
   const eventAttendances = await crmService.getEventAttendances(contact, event);
 
   if (eventAttendances.length !== 0) {
-    console.log(
-      `There should be no existing event attendances for the contact and course`
-    );
-    slackService.sendError(
+    logger.error(
       `There should be no existing event attendances for the contact and course`
     );
 
@@ -217,8 +196,8 @@ export const addToCourse = async (
   try {
     await crmService.createEventAttendance(event, contact);
   } catch (error) {
-    console.log(error);
-    slackService.sendError(`Failed to create event attendance`);
+    logger.error(`Failed to create event attendance`, error);
+
     return {
       statusCode: 500,
       body: JSON.stringify({
