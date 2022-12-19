@@ -233,6 +233,65 @@ describe("addToNewsLetter", () => {
         body: `{"reason":"Failed to opt user into mailing."}`,
       });
     });
+
+    test("Returns 500 if you don't given an email", async () => {
+      const crmService = {
+        apiPath: "apiPath",
+        hostname: "hostname",
+        api: "api",
+        token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
+        getBody: jest.fn(() => {
+          return Promise.resolve({ result: true });
+        }),
+
+        authenticate: jest.fn(() => {
+          return Promise.resolve();
+        }),
+
+        getContactsByEmail: jest.fn(() => {
+          return Promise.resolve([
+            {
+              id: "123",
+              firstName: "",
+              lastName: "",
+              location: "",
+              email: "",
+              receivesNewsletter: false,
+            },
+          ]);
+        }),
+
+        updateContact: jest.fn(() => {
+          throw new Error("Failed to opt user in");
+        }),
+
+        createNewContact: jest.fn(() => {
+          return Promise.resolve({
+            id: "123",
+            firstName: "",
+            lastName: "",
+            location: "",
+            receivesNewsletter: true,
+            email: "",
+          });
+        }),
+      };
+
+      const slackService = new SlackService();
+
+      const result = await addToNewsletter({}, crmService, slackService);
+
+      expect(result).toEqual({
+        statusCode: 500,
+        body: `{"reason":"You did not supply an email address"}`,
+      });
+    });
   });
 
   describe("Sign up location", () => {

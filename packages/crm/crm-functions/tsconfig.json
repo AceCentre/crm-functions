@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "preserveConstEnums": true,
     "outDir": "./dist",
-    "sourceMap": false,
+    "sourceMap": true,
     "skipLibCheck": true
   },
   "files": ["index.ts"],

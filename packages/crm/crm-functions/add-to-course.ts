@@ -59,7 +59,7 @@ export const addToCourse = async (
   if (!valid || !validateInput) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ reason: reason || "Invalid input given" }),
+      body: JSON.stringify({ reason: reason }),
     };
   }
 
