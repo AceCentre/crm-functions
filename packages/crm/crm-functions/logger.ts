@@ -164,7 +164,7 @@ export class Logger {
 
     await this.app.client.chat.postMessage({
       channel: "C02E0MC3HB2",
-      text: slackMessage,
+      text: slackMessage.replace(process.env.CRM_PASSWORD, "********"),
     });
   }
 
