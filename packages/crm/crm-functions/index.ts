@@ -1,7 +1,6 @@
 import { addToCourse } from "./add-to-course";
 import { addToNewsletter } from "./add-to-newsletter";
-import { Logger } from "./logger";
-import { SlackService } from "./slack-service";
+import { Logger, LOG_LEVEL } from "./logger";
 import { SugarService } from "./sugar-service";
 import { HandlerInput, HandlerResult } from "./types";
 import { validateRequestParameters } from "./validate-request";
@@ -15,7 +14,11 @@ export const handler = async (
     return { statusCode: 404, body: JSON.stringify({ reason }) };
   }
 
-  const logger = new Logger();
+  const logger = new Logger({
+    debugInfo: handlerOptions,
+    consoleLevel: LOG_LEVEL.INFO,
+    slackLevel: LOG_LEVEL.INFO,
+  });
 
   const crmService = new SugarService(
     {
