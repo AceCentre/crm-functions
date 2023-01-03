@@ -1,9 +1,9 @@
 import { addToCourse } from "../add-to-course";
-import { Logger } from "../logger";
+import { Logger, LOG_LEVEL } from "../logger";
 
 describe("addToCourse", () => {
   test("Email is required", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -52,7 +52,7 @@ describe("addToCourse", () => {
   });
 
   test("Course name is required", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -105,7 +105,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if the CRM can't authenticate", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -160,7 +160,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if the CRM can't return events", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -215,7 +215,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if there are too many matching events", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -275,7 +275,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if there are too few matching events", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -332,7 +332,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if it cannot get the contacts", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -389,7 +389,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if there are too many contacts", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -465,7 +465,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if it can't create a contact", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -515,7 +515,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if the event attendance already exists", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -585,7 +585,7 @@ describe("addToCourse", () => {
   });
 
   test("Returns an error if it cannot create the event attendance", async () => {
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -666,7 +666,7 @@ describe("addToCourse", () => {
       });
     });
 
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -743,7 +743,7 @@ describe("addToCourse", () => {
       return Promise.resolve({ id: "123", name: "123" });
     });
 
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",
@@ -828,7 +828,7 @@ describe("addToCourse", () => {
       });
     });
 
-    const logger = new Logger();
+    const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
     const crmService = {
       logger,
       apiPath: "apiPath",

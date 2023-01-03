@@ -1,10 +1,10 @@
 import { addToNewsletter } from "../add-to-newsletter";
-import { Logger } from "../logger";
+import { Logger, LOG_LEVEL } from "../logger";
 
 describe("addToNewsLetter", () => {
   describe("Handles Sugar errors", () => {
     test("Returns 500 when Sugar can't authenticate the user", async () => {
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -61,7 +61,7 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 when Sugar can't get contacts", async () => {
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -119,7 +119,7 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 when Sugar can't create a new contact", async () => {
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -170,7 +170,7 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 when Sugar can't opt a user in", async () => {
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -235,7 +235,7 @@ describe("addToNewsLetter", () => {
     });
 
     test("Returns 500 if you don't given an email", async () => {
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -307,7 +307,7 @@ describe("addToNewsLetter", () => {
         });
       });
 
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -370,7 +370,7 @@ describe("addToNewsLetter", () => {
         });
       });
 
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -431,7 +431,7 @@ describe("addToNewsLetter", () => {
           email: "",
         });
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -484,7 +484,7 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -551,7 +551,7 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -620,7 +620,7 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -688,7 +688,7 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -755,7 +755,7 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -822,7 +822,7 @@ describe("addToNewsLetter", () => {
       const updateContact = jest.fn(() => {
         return Promise.resolve();
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -898,7 +898,7 @@ describe("addToNewsLetter", () => {
           email: "",
         });
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
@@ -956,7 +956,7 @@ describe("addToNewsLetter", () => {
           email: "",
         });
       });
-      const logger = new Logger();
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
       const crmService = {
         logger,
         apiPath: "apiPath",
