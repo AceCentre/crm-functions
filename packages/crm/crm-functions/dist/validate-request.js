@@ -34,3 +34,4 @@ const validateRequestParameters = (handlerOptions) => {
     return { valid: true, reason: "" };
 };
 exports.validateRequestParameters = validateRequestParameters;
+//# sourceMappingURL=validate-request.js.map

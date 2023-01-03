@@ -23,21 +23,19 @@ const validateInput = (input) => {
         valid: true,
     };
 };
-const addToNewsletter = async (handlerInput, crmService, slackService) => {
+const addToNewsletter = async (handlerInput, crmService, logger) => {
     const { validatedInput, valid, reason } = validateInput(handlerInput);
     if (!valid || !validateInput) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ reason: reason || "Invalid input given" }),
+            body: JSON.stringify({ reason: reason }),
         };
     }
     try {
         await crmService.authenticate();
     }
     catch (error) {
-        console.log("An error occurred whilst authenticating to SugarCRM");
-        console.log(error);
-        slackService.sendError("An error occurred whilst authenticating to SugarCRM");
+        logger.error("An error occurred whilst authenticating to SugarCRM", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ reason: "Failed to authenticate to SugarCRM." }),
@@ -48,16 +46,13 @@ const addToNewsletter = async (handlerInput, crmService, slackService) => {
         listOfExistingContacts = await crmService.getContactsByEmail(validatedInput.email);
     }
     catch (error) {
-        console.log("An error occurred whilst trying to get contacts by email");
-        slackService.sendError("An error occurred whilst trying to get contacts by email");
-        console.log(error);
+        logger.error("An error occurred whilst trying to get contacts by email", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ reason: "Failed to get contacts by email." }),
         };
     }
     if (listOfExistingContacts.length === 0) {
-        console.log("No existing contacts found for:", validatedInput.email);
         try {
             let unsavedContact = {
                 email: validatedInput.email,
@@ -74,28 +69,22 @@ const addToNewsletter = async (handlerInput, crmService, slackService) => {
             if (validatedInput.lastName) {
                 unsavedContact.lastName = validatedInput.lastName;
             }
-            const newContact = await crmService.createNewContact(unsavedContact);
-            console.log("Successfully created new contact", newContact.id);
+            await crmService.createNewContact(unsavedContact);
         }
         catch (error) {
-            console.log(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`);
-            slackService.sendError(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`);
-            console.log(error);
+            logger.error(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`, error);
             return {
                 statusCode: 500,
                 body: JSON.stringify({ reason: "Failed to create a new contact." }),
             };
         }
-        slackService.sendSuccess(`Create a new contact for email.`);
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Create a new contact for email." }),
         };
     }
     else {
-        console.log(`Found ${listOfExistingContacts.length} contact(s) for email ${validatedInput.email}`);
         for (const currentContact of listOfExistingContacts) {
-            console.log("Opting into mailing for contact:", currentContact.id);
             try {
                 let updateContact = {
                     id: currentContact.id,
@@ -116,16 +105,13 @@ const addToNewsletter = async (handlerInput, crmService, slackService) => {
                 await crmService.updateContact(updateContact);
             }
             catch (error) {
-                console.log(`An error occurred whilst trying to opt ${currentContact.id} into mailing`);
-                slackService.sendError(`An error occurred whilst trying to opt ${currentContact.id} into mailing`);
-                console.log(error);
+                logger.error(`An error occurred whilst trying to opt ${currentContact.id} into mailing`, error);
                 return {
                     statusCode: 500,
                     body: JSON.stringify({ reason: "Failed to opt user into mailing." }),
                 };
             }
         }
-        slackService.sendSuccess(`Updated ${listOfExistingContacts.length} existing contact`);
         return {
             statusCode: 200,
             body: JSON.stringify({
@@ -135,3 +121,4 @@ const addToNewsletter = async (handlerInput, crmService, slackService) => {
     }
 };
 exports.addToNewsletter = addToNewsletter;
+//# sourceMappingURL=add-to-newsletter.js.map

@@ -7,3 +7,4 @@ const slugify = (input) => input
     .map((x) => x.trim())
     .join("-");
 exports.slugify = slugify;
+//# sourceMappingURL=slugify.js.map

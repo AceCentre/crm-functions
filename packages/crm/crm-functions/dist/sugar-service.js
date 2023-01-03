@@ -3,12 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SugarService = void 0;
 const undici_1 = require("undici");
 class SugarService {
-    constructor({ username, password }) {
+    constructor({ username, password }, logger) {
         this.hostname = "https://ace.acrm.accessacloud.com";
         this.apiPath = "/rest/v10";
         this.api = `${this.hostname}${this.apiPath}`;
         this.username = username;
         this.password = password;
+        this.logger = logger;
     }
     async getBody(path, method, withAuth = true, reqBody = {}) {
         if (withAuth && this.token === undefined) {
@@ -18,8 +19,7 @@ class SugarService {
         if (withAuth) {
             headers["Authorization"] = `Bearer ${this.token}`;
         }
-        console.log("===== REQ ======");
-        console.log(Object.assign({ path }, reqBody));
+        this.logger.info("Sending Request: ", Object.assign({ path }, reqBody));
         const { body, statusCode } = await (0, undici_1.request)(path, {
             method,
             body: JSON.stringify(reqBody),
@@ -35,9 +35,7 @@ class SugarService {
         if (statusCode !== 200) {
             throw new Error(`Non 200 status given for path: ${path}. Status code: ${statusCode}, body: ${JSON.stringify(response)}`);
         }
-        console.log("===== RES =======");
-        console.log({ response, path, method });
-        console.log("");
+        this.logger.info("Response: ", { response, path, method });
         return response;
     }
     async authenticate() {
@@ -215,3 +213,4 @@ class SugarService {
     }
 }
 exports.SugarService = SugarService;
+//# sourceMappingURL=sugar-service.js.map

@@ -23,21 +23,20 @@ const validateInput = (input) => {
         valid: true,
     };
 };
-const addToCourse = async (handlerInput, crmService, slackService) => {
+const addToCourse = async (handlerInput, crmService, logger) => {
     const { validatedInput, valid, reason } = validateInput(handlerInput);
     if (!valid || !validateInput) {
+        logger.error("An invalid input was given");
         return {
             statusCode: 500,
-            body: JSON.stringify({ reason: reason || "Invalid input given" }),
+            body: JSON.stringify({ reason: reason }),
         };
     }
     try {
         await crmService.authenticate();
     }
     catch (error) {
-        console.log("An error occurred whilst authenticating to SugarCRM");
-        console.log(error);
-        slackService.sendError("An error occurred whilst authenticating to SugarCRM");
+        logger.error("An error occurred whilst authenticating to SugarCRM.", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ reason: "Failed to authenticate to SugarCRM." }),
@@ -49,9 +48,7 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
         events = await crmService.getAllEvents();
     }
     catch (error) {
-        console.log("An error occurred whilst trying to get all the events from CRM");
-        slackService.sendError("An error occurred whilst trying to get all events.");
-        console.log(error);
+        logger.error("An error occurred whilst trying to get all events.", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ reason: "Failed to get a list of events" }),
@@ -60,7 +57,7 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
     // Find the event that was purchased
     const matchingEvents = events.filter((event) => event.webpage.toLowerCase().includes(validatedInput.eventSlug.toLowerCase()));
     if (matchingEvents.length !== 1) {
-        slackService.sendError(`You gave an an event slug tht we couldn't find or found too many events for (${matchingEvents.length})`);
+        logger.error(`You gave an an event slug tht we couldn't find or found too many events for (${matchingEvents.length})`);
         return {
             statusCode: 404,
             body: JSON.stringify({
@@ -75,9 +72,7 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
         listOfExistingContacts = await crmService.getContactsByEmail(validatedInput.email);
     }
     catch (error) {
-        console.log("An error occurred whilst trying to get contacts by email");
-        slackService.sendError("An error occurred whilst trying to get contacts by email");
-        console.log(error);
+        logger.error("An error occurred whilst trying to get contacts by email", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ reason: "Failed to get contacts by email." }),
@@ -85,8 +80,7 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
     }
     // Bail if there are multiple contacts
     if (listOfExistingContacts.length > 1) {
-        console.log(`There are too many (${listOfExistingContacts.length}) contacts for the email address: ${validatedInput.email}`);
-        slackService.sendError(`There are too many (${listOfExistingContacts.length}) contacts for the email address: ${validatedInput.email}`);
+        logger.error(`There are too many (${listOfExistingContacts.length}) contacts for the email address: ${validatedInput.email}`);
         return {
             statusCode: 500,
             body: JSON.stringify({
@@ -115,12 +109,9 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
                 unsavedContact.lastName = validatedInput.lastName;
             }
             contact = await crmService.createNewContact(unsavedContact);
-            console.log("Successfully created new contact", contact.id);
         }
         catch (error) {
-            console.log(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`);
-            slackService.sendError(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`);
-            console.log(error);
+            logger.error(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`, error);
             return {
                 statusCode: 500,
                 body: JSON.stringify({ reason: "Failed to create a new contact." }),
@@ -130,8 +121,7 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
     // By this point we are guaranteed a course and event
     const eventAttendances = await crmService.getEventAttendances(contact, event);
     if (eventAttendances.length !== 0) {
-        console.log(`There should be no existing event attendances for the contact and course`);
-        slackService.sendError(`There should be no existing event attendances for the contact and course`);
+        logger.error(`There should be no existing event attendances for the contact and course`);
         return {
             statusCode: 500,
             body: JSON.stringify({
@@ -143,8 +133,7 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
         await crmService.createEventAttendance(event, contact);
     }
     catch (error) {
-        console.log(error);
-        slackService.sendError(`Failed to create event attendance`);
+        logger.error(`Failed to create event attendance`, error);
         return {
             statusCode: 500,
             body: JSON.stringify({
@@ -160,3 +149,4 @@ const addToCourse = async (handlerInput, crmService, slackService) => {
     };
 };
 exports.addToCourse = addToCourse;
+//# sourceMappingURL=add-to-course.js.map
