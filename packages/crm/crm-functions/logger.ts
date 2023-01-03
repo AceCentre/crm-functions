@@ -128,6 +128,10 @@ export class Logger {
 
     const messagesToLog = this.getMessages(this.slackLevel);
 
+    if (messagesToLog.length === 0) {
+      return;
+    }
+
     let infoToSnippet = [];
 
     let messageCount = 1;

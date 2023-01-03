@@ -81,6 +81,9 @@ class Logger {
         slackMessage += JSON.stringify(this.debugInfo, null, 2);
         slackMessage += "```\n\n";
         const messagesToLog = this.getMessages(this.slackLevel);
+        if (messagesToLog.length === 0) {
+            return;
+        }
         let infoToSnippet = [];
         let messageCount = 1;
         for (const message of messagesToLog) {
