@@ -168,9 +168,8 @@ describe.skip("Slack formatting", () => {
       debugInfo: { email: "test", ignored: true },
     });
 
-    process.env.SLACK_TOKEN =
-      "xoxb-3066715391-2450100639013-kjRgi3lLK7IjdMfI7Da7gY0Z";
-    process.env.SLACK_SIGNING_TOKEN = "a4e665a9f9b44e6be9259a96b1f5258e";
+    process.env.SLACK_TOKEN = "";
+    process.env.SLACK_SIGNING_TOKEN = "";
 
     await logger.connect();
 
