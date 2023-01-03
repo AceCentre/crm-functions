@@ -78,21 +78,27 @@ export class Logger {
     this.messages.push({ message, level: LOG_LEVEL.ERROR, error });
   }
 
-  flushToConsole() {
+  getMessages(logLevel: LOG_LEVEL): LogMessage[] {
     const filteredMessages = this.messages.filter(
-      (message) => message.level >= this.consoleLevel
+      (message) => message.level >= logLevel
     );
-
-    if (filteredMessages.length > 0) {
-      console.log("----------------");
-      console.log("Debug Info", this.debugInfo);
-    }
 
     const doesIncludeError = filteredMessages
       .flatMap((x) => x.level)
       .includes(LOG_LEVEL.ERROR);
 
     const messagesToLog = doesIncludeError ? this.messages : filteredMessages;
+
+    return messagesToLog;
+  }
+
+  flushToConsole() {
+    const messagesToLog = this.getMessages(this.consoleLevel);
+
+    if (messagesToLog.length > 0) {
+      console.log("----------------");
+      console.log("Debug Info", this.debugInfo);
+    }
 
     let messageCount = 1;
     for (const message of messagesToLog) {
@@ -108,7 +114,7 @@ export class Logger {
       messageCount++;
     }
 
-    if (filteredMessages.length > 0) {
+    if (messagesToLog.length > 0) {
       console.log("----------------");
     }
   }
@@ -120,15 +126,7 @@ export class Logger {
     slackMessage += JSON.stringify(this.debugInfo, null, 2);
     slackMessage += "```\n\n";
 
-    const filteredMessages = this.messages.filter(
-      (message) => message.level >= this.slackLevel
-    );
-
-    const doesIncludeError = filteredMessages
-      .flatMap((x) => x.level)
-      .includes(LOG_LEVEL.ERROR);
-
-    const messagesToLog = doesIncludeError ? this.messages : filteredMessages;
+    const messagesToLog = this.getMessages(this.slackLevel);
 
     let messageCount = 1;
     for (const message of messagesToLog) {
