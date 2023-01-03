@@ -105,7 +105,7 @@ POST https://crm-connector-k7gic.ondigitalocean.app/crm/crm-functions
 Content-Type: application/json
 
 {
-    "email":"cypress@gavinhenderson.co.uk",
-    "eventSlug": "test-event",
+    "email":"gavin.henderson@hotmail.co.uk",
+    "eventSlug": "developing-and-using-a-communication-book-i-10th-jan-23",
     "method": "add-to-course"
 }

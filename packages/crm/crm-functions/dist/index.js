@@ -14,7 +14,7 @@ const handler = async (handlerOptions) => {
     const logger = new logger_1.Logger({
         debugInfo: handlerOptions,
         consoleLevel: logger_1.LOG_LEVEL.INFO,
-        slackLevel: logger_1.LOG_LEVEL.INFO,
+        slackLevel: logger_1.LOG_LEVEL.ERROR,
     });
     const crmService = new sugar_service_1.SugarService({
         username: process.env.CRM_USERNAME,

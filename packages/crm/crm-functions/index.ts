@@ -17,7 +17,7 @@ export const handler = async (
   const logger = new Logger({
     debugInfo: handlerOptions,
     consoleLevel: LOG_LEVEL.INFO,
-    slackLevel: LOG_LEVEL.INFO,
+    slackLevel: LOG_LEVEL.ERROR,
   });
 
   const crmService = new SugarService(
