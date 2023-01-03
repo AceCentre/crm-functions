@@ -81,6 +81,7 @@ class Logger {
         slackMessage += JSON.stringify(this.debugInfo, null, 2);
         slackMessage += "```\n\n";
         const messagesToLog = this.getMessages(this.slackLevel);
+        let infoToSnippet = [];
         let messageCount = 1;
         for (const message of messagesToLog) {
             slackMessage += `Message ${messageCount}:  ${message.message}\n`;
@@ -91,11 +92,15 @@ class Logger {
                     slackMessage += JSON.stringify(message.extraInfo.stack, null, 2);
                     slackMessage += "```\n\n";
                 }
-                else {
+                else if (JSON.stringify(message.extraInfo, null, 2).length < 1000) {
                     slackMessage += `Extra Info ${messageCount}:\n`;
                     slackMessage += "```\n";
                     slackMessage += JSON.stringify(message.extraInfo, null, 2);
                     slackMessage += "```\n\n";
+                }
+                else {
+                    slackMessage += `Extra Info ${messageCount}: See snippet\n`;
+                    infoToSnippet.push(message.extraInfo);
                 }
             }
             if (message.error !== undefined) {
@@ -116,8 +121,16 @@ class Logger {
         }
         await this.app.client.chat.postMessage({
             channel: "C02E0MC3HB2",
-            text: slackMessage,
+            text: slackMessage.replace(process.env.CRM_PASSWORD, "********"),
         });
+        for (const currentInfo of infoToSnippet) {
+            await this.app.client.files.uploadV2({
+                channels: "C02E0MC3HB2",
+                content: JSON.stringify(currentInfo, null, 2),
+                filename: "temp.json",
+                title: "Extra information",
+            });
+        }
     }
     // Flushes logs to console and slack depending on log level
     async flush() {
