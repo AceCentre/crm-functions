@@ -186,7 +186,7 @@ class SugarService {
             first_name: newContact.firstName,
             last_name: newContact.lastName,
             receives_newsletter_c: newContact.receivesNewsletter,
-            location: newContact.location,
+            sign_up_form_location_c: newContact.location,
         });
         if (result &&
             result.id !== undefined &&

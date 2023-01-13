@@ -59,7 +59,6 @@ const addToNewsletter = async (handlerInput, crmService, logger) => {
                 receivesNewsletter: true,
                 firstName: validatedInput.email,
                 lastName: "Unknown",
-                location: validatedInput.location,
             };
             if (validatedInput.location) {
                 unsavedContact.location = (0, slugify_1.slugify)(validatedInput.location);

@@ -94,7 +94,7 @@ POST https://crm-connector-k7gic.ondigitalocean.app/crm/crm-functions
 Content-Type: application/json
 
 {
-    "email": "fake@gavinhenderson.co.uk",
+    "email": "123@gavinhenderson.co.uk",
     "method": "add-to-newsletter",
     "location": "rest"
 }

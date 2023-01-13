@@ -97,7 +97,6 @@ export const addToNewsletter = async (
         receivesNewsletter: true,
         firstName: validatedInput.email,
         lastName: "Unknown",
-        location: validatedInput.location,
       };
 
       if (validatedInput.location) {
