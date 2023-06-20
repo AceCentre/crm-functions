@@ -294,8 +294,8 @@ export class SugarService {
       typeof result.email1 === "string" &&
       result.receives_newsletter_c !== undefined &&
       typeof result.receives_newsletter_c === "boolean" &&
-      result.tags !== undefined &&
-      Array.isArray(result.tags)
+      result.tag !== undefined &&
+      Array.isArray(result.tag)
     ) {
       return {
         id: result.id,
@@ -304,7 +304,7 @@ export class SugarService {
         location: result.sign_up_form_location_c,
         receivesNewsletter: result.receives_newsletter_c,
         email: result.email1,
-        tags: result.tags as Array<{ name: string }>,
+        tags: result.tag as Array<{ name: string }>,
       };
     }
 
