@@ -41,6 +41,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -90,6 +91,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -143,6 +145,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -200,6 +203,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -258,6 +262,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -315,6 +320,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -374,6 +380,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -424,6 +431,7 @@ describe("addToCourse", () => {
             lastName: "name",
             email: "email@email.com",
             receivesNewsletter: true,
+            tags: [],
           },
           {
             id: "124",
@@ -432,6 +440,7 @@ describe("addToCourse", () => {
             lastName: "name",
             email: "email@email.com",
             receivesNewsletter: true,
+            tags: [],
           },
         ]);
       }),
@@ -448,6 +457,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -552,6 +562,7 @@ describe("addToCourse", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           },
         ]);
       }),
@@ -568,6 +579,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -624,6 +636,7 @@ describe("addToCourse", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           },
         ]);
       }),
@@ -640,6 +653,7 @@ describe("addToCourse", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       }),
     };
@@ -663,6 +677,7 @@ describe("addToCourse", () => {
         location: "",
         receivesNewsletter: true,
         email: "",
+        tags: [],
       });
     });
 
@@ -736,6 +751,7 @@ describe("addToCourse", () => {
         location: "",
         receivesNewsletter: true,
         email: "",
+        tags: [],
       });
     });
 
@@ -780,6 +796,7 @@ describe("addToCourse", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           },
         ]);
       }),
@@ -803,6 +820,7 @@ describe("addToCourse", () => {
       { id: "123", name: "Event", webpage: "new-product" },
       {
         email: "",
+        tags: [],
         firstName: "",
         id: "existing-event",
         lastName: "",
@@ -825,6 +843,7 @@ describe("addToCourse", () => {
         location: "",
         receivesNewsletter: true,
         email: "",
+        tags: [],
       });
     });
 

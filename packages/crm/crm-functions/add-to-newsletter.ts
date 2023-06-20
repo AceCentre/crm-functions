@@ -13,6 +13,7 @@ type AddToNewsletterInput = {
   location?: string;
   firstName?: string;
   lastName?: string;
+  tags?: Array<{ name: string }>;
 };
 
 const validateInput = (input: {
@@ -40,6 +41,10 @@ const validateInput = (input: {
 
   if (input.lastName && typeof input.lastName === "string") {
     validInput.lastName = input.lastName;
+  }
+
+  if (input.tags && Array.isArray(input.tags)) {
+    validInput.tags = input.tags;
   }
 
   return {
@@ -99,6 +104,10 @@ export const addToNewsletter = async (
         lastName: "Unknown",
       };
 
+      if (validatedInput.tags) {
+        unsavedContact.tags = validatedInput.tags;
+      }
+
       if (validatedInput.location) {
         unsavedContact.location = slugify(validatedInput.location);
       }
@@ -135,6 +144,15 @@ export const addToNewsletter = async (
           id: currentContact.id,
           receivesNewsletter: true,
         };
+
+        if (
+          validatedInput.tags !== undefined &&
+          currentContact.tags !== undefined
+        ) {
+          updateContact.tags = [...currentContact.tags, ...validatedInput.tags];
+        } else if (validatedInput.tags !== undefined) {
+          updateContact.tags = validatedInput.tags;
+        }
 
         if (!!currentContact.location == false && validatedInput.location) {
           updateContact.location = slugify(validatedInput.location);

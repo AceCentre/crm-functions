@@ -42,6 +42,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -100,6 +101,8 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+
+            tags: [],
           });
         }),
       };
@@ -199,6 +202,7 @@ describe("addToNewsLetter", () => {
               lastName: "",
               location: "",
               email: "",
+              tags: [],
               receivesNewsletter: false,
             },
           ]);
@@ -216,6 +220,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -264,6 +269,7 @@ describe("addToNewsLetter", () => {
               lastName: "",
               location: "",
               email: "",
+              tags: [],
               receivesNewsletter: false,
             },
           ]);
@@ -281,6 +287,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -304,6 +311,7 @@ describe("addToNewsLetter", () => {
           location: "test-location",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       });
 
@@ -367,6 +375,7 @@ describe("addToNewsLetter", () => {
           location: "non-slugged-test",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       });
 
@@ -429,6 +438,7 @@ describe("addToNewsLetter", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       });
       const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
@@ -512,6 +522,7 @@ describe("addToNewsLetter", () => {
               location: "",
               receivesNewsletter: true,
               email: "",
+              tags: [],
             },
           ]);
         }),
@@ -524,6 +535,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -579,6 +591,7 @@ describe("addToNewsLetter", () => {
               location: "existing-location",
               receivesNewsletter: true,
               email: "",
+              tags: [],
             },
           ]);
         }),
@@ -591,6 +604,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -611,6 +625,295 @@ describe("addToNewsLetter", () => {
       expect(updateContact).toBeCalledWith({
         id: "123",
         receivesNewsletter: true,
+      });
+    });
+  });
+
+  describe("Tags", () => {
+    test("Adds tags to a new contact", async () => {
+      const createNewContact = jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "test-location",
+          receivesNewsletter: true,
+          email: "",
+          tags: [
+            {
+              name: "fake-tag",
+            },
+            {
+              name: "another-fake-tag",
+            },
+          ],
+        });
+      });
+
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
+      const crmService = {
+        logger,
+        apiPath: "apiPath",
+        hostname: "hostname",
+        api: "api",
+        token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
+        getBody: jest.fn(() => {
+          return Promise.resolve({ result: true });
+        }),
+        authenticate: jest.fn(() => {
+          return Promise.resolve();
+        }),
+        getContactsByEmail: jest.fn(() => {
+          return Promise.resolve([]);
+        }),
+        updateContact: jest.fn(() => {
+          return Promise.resolve();
+        }),
+        createNewContact,
+      };
+
+      const result = await addToNewsletter(
+        {
+          email: "user-to-add@email.com",
+          location: "test-location",
+          tags: [
+            {
+              name: "fake-tag",
+            },
+            {
+              name: "another-fake-tag",
+            },
+          ],
+        },
+        crmService,
+        logger
+      );
+
+      expect(result).toEqual({
+        statusCode: 200,
+        body: '{"message":"Create a new contact for email."}',
+      });
+      expect(createNewContact).toBeCalledTimes(1);
+      expect(createNewContact).toBeCalledWith({
+        email: "user-to-add@email.com",
+        location: "test-location",
+        receivesNewsletter: true,
+        firstName: "user-to-add@email.com",
+        lastName: "Unknown",
+        tags: [
+          {
+            name: "fake-tag",
+          },
+          {
+            name: "another-fake-tag",
+          },
+        ],
+      });
+    });
+
+    test("Adds tags to a existing contact", async () => {
+      const createNewContact = jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "test-location",
+          receivesNewsletter: true,
+          email: "",
+          tags: [
+            {
+              name: "fake-tag",
+            },
+            {
+              name: "another-fake-tag",
+            },
+          ],
+        });
+      });
+
+      const updateContact = jest.fn(() => {
+        return Promise.resolve();
+      });
+
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
+      const crmService = {
+        logger,
+        apiPath: "apiPath",
+        hostname: "hostname",
+        api: "api",
+        token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
+        getBody: jest.fn(() => {
+          return Promise.resolve({ result: true });
+        }),
+        authenticate: jest.fn(() => {
+          return Promise.resolve();
+        }),
+        getContactsByEmail: jest.fn(() => {
+          return Promise.resolve([
+            {
+              id: "123",
+              firstName: "Gavin",
+              lastName: "Henderson",
+              location: "test-location",
+              receivesNewsletter: true,
+              email: "user-to-add@email.com",
+              tags: [],
+            },
+          ]);
+        }),
+        updateContact,
+        createNewContact,
+      };
+
+      const result = await addToNewsletter(
+        {
+          email: "user-to-add@email.com",
+          location: "test-location",
+          tags: [
+            {
+              name: "fake-tag",
+            },
+            {
+              name: "another-fake-tag",
+            },
+          ],
+        },
+        crmService,
+        logger
+      );
+
+      expect(result).toEqual({
+        statusCode: 200,
+        body: '{"message":"Updated 1 existing contact"}',
+      });
+      expect(createNewContact).toBeCalledTimes(0);
+      expect(updateContact).toBeCalledTimes(1);
+      expect(updateContact).toBeCalledWith({
+        id: "123",
+        receivesNewsletter: true,
+        tags: [
+          {
+            name: "fake-tag",
+          },
+          {
+            name: "another-fake-tag",
+          },
+        ],
+      });
+    });
+
+    test("Adds tags when contact already has tags to a existing contact", async () => {
+      const createNewContact = jest.fn(() => {
+        return Promise.resolve({
+          id: "123",
+          firstName: "",
+          lastName: "",
+          location: "test-location",
+          receivesNewsletter: true,
+          email: "",
+          tags: [
+            {
+              name: "fake-tag",
+            },
+            {
+              name: "another-fake-tag",
+            },
+          ],
+        });
+      });
+
+      const updateContact = jest.fn(() => {
+        return Promise.resolve();
+      });
+
+      const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
+      const crmService = {
+        logger,
+        apiPath: "apiPath",
+        hostname: "hostname",
+        api: "api",
+        token: "token",
+        username: "fake",
+        password: "fake",
+
+        createEventAttendance: jest.fn(),
+        getEventAttendances: jest.fn(),
+        getAllEvents: jest.fn(),
+        getBody: jest.fn(() => {
+          return Promise.resolve({ result: true });
+        }),
+        authenticate: jest.fn(() => {
+          return Promise.resolve();
+        }),
+        getContactsByEmail: jest.fn(() => {
+          return Promise.resolve([
+            {
+              id: "123",
+              firstName: "Gavin",
+              lastName: "Henderson",
+              location: "",
+              receivesNewsletter: true,
+              email: "",
+              tags: [{ name: "already-has-tag" }],
+            },
+          ]);
+        }),
+        updateContact,
+        createNewContact,
+      };
+
+      const result = await addToNewsletter(
+        {
+          email: "user-to-add@email.com",
+          location: "test-location",
+          tags: [
+            {
+              name: "fake-tag",
+            },
+            {
+              name: "another-fake-tag",
+            },
+          ],
+        },
+        crmService,
+        logger
+      );
+
+      expect(result).toEqual({
+        statusCode: 200,
+        body: '{"message":"Updated 1 existing contact"}',
+      });
+      expect(createNewContact).toBeCalledTimes(0);
+      expect(updateContact).toBeCalledTimes(1);
+      expect(updateContact).toBeCalledWith({
+        id: "123",
+
+        location: "test-location",
+        receivesNewsletter: true,
+
+        tags: [
+          {
+            name: "already-has-tag",
+          },
+          {
+            name: "fake-tag",
+          },
+          {
+            name: "another-fake-tag",
+          },
+        ],
       });
     });
   });
@@ -648,6 +951,7 @@ describe("addToNewsLetter", () => {
               location: "",
               receivesNewsletter: true,
               email: "",
+              tags: [],
             },
           ]);
         }),
@@ -660,6 +964,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -716,6 +1021,7 @@ describe("addToNewsLetter", () => {
               location: "",
               receivesNewsletter: true,
               email: "",
+              tags: [],
             },
           ]);
         }),
@@ -728,6 +1034,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -783,6 +1090,7 @@ describe("addToNewsLetter", () => {
               location: "",
               receivesNewsletter: true,
               email: "user-to-add@email.com",
+              tags: [],
             },
           ]);
         }),
@@ -795,6 +1103,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -850,6 +1159,7 @@ describe("addToNewsLetter", () => {
               location: "",
               receivesNewsletter: true,
               email: "user-to-add@email.com",
+              tags: [],
             },
           ]);
         }),
@@ -862,6 +1172,7 @@ describe("addToNewsLetter", () => {
             location: "",
             receivesNewsletter: true,
             email: "",
+            tags: [],
           });
         }),
       };
@@ -896,6 +1207,7 @@ describe("addToNewsLetter", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       });
       const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
@@ -954,6 +1266,7 @@ describe("addToNewsLetter", () => {
           location: "",
           receivesNewsletter: true,
           email: "",
+          tags: [],
         });
       });
       const logger = new Logger({ consoleLevel: LOG_LEVEL.NONE });
