@@ -147,7 +147,9 @@ class SugarService {
                     record.email1 !== undefined &&
                     typeof record.email1 === "string" &&
                     record.receives_newsletter_c !== undefined &&
-                    typeof record.receives_newsletter_c === "boolean") {
+                    typeof record.receives_newsletter_c === "boolean" &&
+                    record.tag !== undefined &&
+                    Array.isArray(record.tag)) {
                     return {
                         id: record.id,
                         lastName: record.last_name,
@@ -155,6 +157,7 @@ class SugarService {
                         location: record.sign_up_form_location_c,
                         email: record.email1,
                         receivesNewsletter: record.receives_newsletter_c,
+                        tags: record.tag.map((x) => ({ name: x.name })),
                     };
                 }
                 else {
@@ -173,6 +176,7 @@ class SugarService {
             email1: contact.email,
             receives_newsletter_c: contact.receivesNewsletter,
             sign_up_form_location_c: contact.location,
+            tag: contact.tags,
         });
         if (result.id && result.id === contact.id) {
             return;
@@ -187,6 +191,7 @@ class SugarService {
             last_name: newContact.lastName,
             receives_newsletter_c: newContact.receivesNewsletter,
             sign_up_form_location_c: newContact.location,
+            tags: newContact.tags,
         });
         if (result &&
             result.id !== undefined &&
@@ -200,7 +205,9 @@ class SugarService {
             result.email1 !== undefined &&
             typeof result.email1 === "string" &&
             result.receives_newsletter_c !== undefined &&
-            typeof result.receives_newsletter_c === "boolean") {
+            typeof result.receives_newsletter_c === "boolean" &&
+            result.tags !== undefined &&
+            Array.isArray(result.tags)) {
             return {
                 id: result.id,
                 lastName: result.last_name,
@@ -208,6 +215,7 @@ class SugarService {
                 location: result.sign_up_form_location_c,
                 receivesNewsletter: result.receives_newsletter_c,
                 email: result.email1,
+                tags: result.tags,
             };
         }
         throw new Error(`Failed to create a new contact: ${newContact.email}`);

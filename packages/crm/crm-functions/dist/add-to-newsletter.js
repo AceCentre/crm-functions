@@ -18,6 +18,9 @@ const validateInput = (input) => {
     if (input.lastName && typeof input.lastName === "string") {
         validInput.lastName = input.lastName;
     }
+    if (input.tags && Array.isArray(input.tags)) {
+        validInput.tags = input.tags;
+    }
     return {
         validatedInput: validInput,
         valid: true,
@@ -60,6 +63,9 @@ const addToNewsletter = async (handlerInput, crmService, logger) => {
                 firstName: validatedInput.email,
                 lastName: "Unknown",
             };
+            if (validatedInput.tags) {
+                unsavedContact.tags = validatedInput.tags;
+            }
             if (validatedInput.location) {
                 unsavedContact.location = (0, slugify_1.slugify)(validatedInput.location);
             }
@@ -90,6 +96,13 @@ const addToNewsletter = async (handlerInput, crmService, logger) => {
                     id: currentContact.id,
                     receivesNewsletter: true,
                 };
+                if (validatedInput.tags !== undefined &&
+                    currentContact.tags !== undefined) {
+                    updateContact.tags = [...currentContact.tags, ...validatedInput.tags];
+                }
+                else if (validatedInput.tags !== undefined) {
+                    updateContact.tags = validatedInput.tags;
+                }
                 if (!!currentContact.location == false && validatedInput.location) {
                     updateContact.location = (0, slugify_1.slugify)(validatedInput.location);
                 }
