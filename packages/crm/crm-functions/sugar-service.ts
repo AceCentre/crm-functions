@@ -258,7 +258,7 @@ export class SugarService {
       email1: contact.email,
       receives_newsletter_c: contact.receivesNewsletter,
       sign_up_form_location_c: contact.location,
-      tags: contact.tags,
+      tag: contact.tags,
     });
 
     if (result.id && result.id === contact.id) {
