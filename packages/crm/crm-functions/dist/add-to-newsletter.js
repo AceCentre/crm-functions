@@ -125,6 +125,9 @@ const addToNewsletter = async (handlerInput, crmService, logger) => {
                 };
             }
         }
+        if (validatedInput.location === "arlo") {
+            return { statusCode: 200 };
+        }
         return {
             statusCode: 200,
             body: JSON.stringify({

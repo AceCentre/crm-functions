@@ -40,7 +40,7 @@ export const handler = async (
     };
   }
 
-  let result = {
+  let result: HandlerResult = {
     statusCode: 404,
     body: JSON.stringify({ reason: "No method supplied" }),
   };
