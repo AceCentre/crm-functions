@@ -188,7 +188,12 @@ export const addToNewsletter = async (
     }
 
     if (validatedInput.location === "arlo") {
-      return { statusCode: 200 };
+      return {
+        statusCode: 201,
+        headers: {
+          Location: "https://acecentre.arlo.co",
+        },
+      };
     }
 
     return {

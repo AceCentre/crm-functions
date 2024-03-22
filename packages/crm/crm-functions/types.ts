@@ -45,6 +45,7 @@ export type Contact = {
 export type HandlerResult = {
   statusCode: number;
   body?: string;
+  headers?: any;
 };
 
 export type SugarEvent = {
