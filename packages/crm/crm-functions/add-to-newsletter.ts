@@ -189,7 +189,7 @@ export const addToNewsletter = async (
 
     if (validatedInput.location === "arlo") {
       return {
-        statusCode: 201,
+        statusCode: 302,
         headers: {
           Location: "https://acecentre.arlo.co",
         },
