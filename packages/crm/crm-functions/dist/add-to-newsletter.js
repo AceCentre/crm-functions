@@ -84,6 +84,14 @@ const addToNewsletter = async (handlerInput, crmService, logger) => {
                 body: JSON.stringify({ reason: "Failed to create a new contact." }),
             };
         }
+        if (validatedInput.location === "arlo") {
+            return {
+                statusCode: 302,
+                headers: {
+                    Location: "https://acecentre.arlo.co",
+                },
+            };
+        }
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Create a new contact for email." }),

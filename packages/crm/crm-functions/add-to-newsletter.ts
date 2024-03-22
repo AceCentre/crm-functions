@@ -133,6 +133,15 @@ export const addToNewsletter = async (
       };
     }
 
+    if (validatedInput.location === "arlo") {
+      return {
+        statusCode: 302,
+        headers: {
+          Location: "https://acecentre.arlo.co",
+        },
+      };
+    }
+
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Create a new contact for email." }),
