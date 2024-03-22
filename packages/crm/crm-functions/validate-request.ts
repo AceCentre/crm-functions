@@ -1,4 +1,4 @@
-import { ALLOWED_METHODS, HandlerInput } from "./types";
+import { HandlerInput } from "./types";
 
 const ALLOWED_PATHS = ["", "/"];
 
@@ -22,22 +22,6 @@ export const validateRequestParameters = (
     return {
       valid: false,
       reason: "Endpoint only accepts requests to /",
-    };
-  }
-
-  if (handlerOptions.method === undefined) {
-    return {
-      valid: false,
-      reason: "You did not provide a 'method'",
-    };
-  }
-
-  const readableMethods: string[] = [...ALLOWED_METHODS];
-
-  if (!readableMethods.includes(handlerOptions.method.toLowerCase())) {
-    return {
-      valid: false,
-      reason: `You provided a non recognised method: ${handlerOptions.method}`,
     };
   }
 

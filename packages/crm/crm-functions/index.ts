@@ -53,6 +53,18 @@ export const handler = async (
     result = await addToCourse(handlerOptions, crmService, logger);
   }
 
+  if (handlerOptions.method === undefined) {
+    result = await addToNewsletter(
+      {
+        ...handlerOptions,
+        location: "arlo",
+        tags: [{ name: "ace-centre-learning" }],
+      },
+      crmService,
+      logger
+    );
+  }
+
   logger.info(`Result:`, result);
 
   try {

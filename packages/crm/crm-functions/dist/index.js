@@ -41,6 +41,9 @@ const handler = async (handlerOptions) => {
     if (handlerOptions.method === "add-to-course") {
         result = await (0, add_to_course_1.addToCourse)(handlerOptions, crmService, logger);
     }
+    if (handlerOptions.method === undefined) {
+        result = await (0, add_to_newsletter_1.addToNewsletter)(Object.assign(Object.assign({}, handlerOptions), { location: "arlo", tags: [{ name: "ace-centre-learning" }] }), crmService, logger);
+    }
     logger.info(`Result:`, result);
     try {
         await logger.flush();
