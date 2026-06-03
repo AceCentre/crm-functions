@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addToNewsletter = void 0;
 const slugify_1 = require("./slugify");
+const undici_1 = require("undici");
 const validateInput = (input) => {
     if (!input.email || typeof input.email !== "string") {
         return { valid: false, reason: "You did not supply an email address" };
@@ -26,7 +27,78 @@ const validateInput = (input) => {
         valid: true,
     };
 };
-const addToNewsletter = async (handlerInput, crmService, logger) => {
+const HUBSPOT_BASE_URL = "https://api.hubapi.com";
+const getHubspotHeaders = () => {
+    const token = process.env.HUBSPOT_TOKEN;
+    if (!token) {
+        throw new Error("Missing HUBSPOT_TOKEN env var");
+    }
+    return {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+    };
+};
+const getExistingContact = async (email) => {
+    var _a;
+    const searchUrl = `${HUBSPOT_BASE_URL}/crm/v3/objects/contacts/search`;
+    const searchBody = {
+        filterGroups: [
+            {
+                filters: [
+                    {
+                        propertyName: "email",
+                        operator: "EQ",
+                        value: email,
+                    },
+                ],
+            },
+        ],
+        properties: ["email", "resource_tags", "signup_location"],
+        limit: 1,
+    };
+    const { body, statusCode } = await (0, undici_1.request)(searchUrl, {
+        method: "POST",
+        headers: getHubspotHeaders(),
+        body: JSON.stringify(searchBody),
+    });
+    const result = (await body.json());
+    if (statusCode !== 200) {
+        throw new Error(`HubSpot search failed (${statusCode}): ${JSON.stringify(result)}`);
+    }
+    if ((_a = result === null || result === void 0 ? void 0 : result.results) === null || _a === void 0 ? void 0 : _a.length) {
+        return result.results[0];
+    }
+    return null;
+};
+const upsertContact = async (email, properties) => {
+    const existing = await getExistingContact(email);
+    if (existing === null || existing === void 0 ? void 0 : existing.id) {
+        const updateUrl = `${HUBSPOT_BASE_URL}/crm/v3/objects/contacts/${existing.id}`;
+        const { body, statusCode } = await (0, undici_1.request)(updateUrl, {
+            method: "PATCH",
+            headers: getHubspotHeaders(),
+            body: JSON.stringify({ properties }),
+        });
+        const result = await body.json();
+        if (statusCode !== 200) {
+            throw new Error(`HubSpot update failed (${statusCode}): ${JSON.stringify(result)}`);
+        }
+        return result;
+    }
+    const createUrl = `${HUBSPOT_BASE_URL}/crm/v3/objects/contacts`;
+    const { body, statusCode } = await (0, undici_1.request)(createUrl, {
+        method: "POST",
+        headers: getHubspotHeaders(),
+        body: JSON.stringify({ properties: Object.assign({ email }, properties) }),
+    });
+    const result = await body.json();
+    if (statusCode !== 201) {
+        throw new Error(`HubSpot create failed (${statusCode}): ${JSON.stringify(result)}`);
+    }
+    return result;
+};
+const addToNewsletter = async (handlerInput, _crmService, logger) => {
+    var _a, _b, _c;
     const { validatedInput, valid, reason } = validateInput(handlerInput);
     if (!valid || !validateInput) {
         return {
@@ -35,119 +107,47 @@ const addToNewsletter = async (handlerInput, crmService, logger) => {
         };
     }
     try {
-        await crmService.authenticate();
+        const hubspotTags = ((_a = validatedInput.tags) === null || _a === void 0 ? void 0 : _a.map((tag) => tag.name).filter(Boolean)) || [];
+        const existing = await getExistingContact(validatedInput.email);
+        const existingTags = ((_c = (_b = existing === null || existing === void 0 ? void 0 : existing.properties) === null || _b === void 0 ? void 0 : _b.tags) === null || _c === void 0 ? void 0 : _c.split(";").filter(Boolean)) || [];
+        const mergedTags = Array.from(new Set([...existingTags, ...hubspotTags])).join(";");
+        const properties = {
+            email: validatedInput.email,
+            optin_newsletter_temporary: true,
+        };
+        if (mergedTags) {
+            properties.tags = mergedTags;
+        }
+        if (validatedInput.location) {
+            properties.sign_up_form_location = (0, slugify_1.slugify)(validatedInput.location);
+        }
+        if (validatedInput.firstName) {
+            properties.firstname = validatedInput.firstName;
+        }
+        if (validatedInput.lastName) {
+            properties.lastname = validatedInput.lastName;
+        }
+        await upsertContact(validatedInput.email, properties);
     }
     catch (error) {
-        logger.error("An error occurred whilst authenticating to SugarCRM", error);
+        logger.error("Failed to upsert HubSpot contact", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ reason: "Failed to authenticate to SugarCRM." }),
+            body: JSON.stringify({ reason: "Failed to update HubSpot contact." }),
         };
     }
-    let listOfExistingContacts = [];
-    try {
-        listOfExistingContacts = await crmService.getContactsByEmail(validatedInput.email);
-    }
-    catch (error) {
-        logger.error("An error occurred whilst trying to get contacts by email", error);
+    if (validatedInput.location === "arlo") {
         return {
-            statusCode: 500,
-            body: JSON.stringify({ reason: "Failed to get contacts by email." }),
+            statusCode: 302,
+            headers: {
+                Location: "https://acecentre.arlo.co",
+            },
         };
     }
-    if (listOfExistingContacts.length === 0) {
-        try {
-            let unsavedContact = {
-                email: validatedInput.email,
-                receivesNewsletter: true,
-                firstName: validatedInput.email,
-                lastName: "Unknown",
-            };
-            if (validatedInput.tags) {
-                unsavedContact.tags = validatedInput.tags;
-            }
-            if (validatedInput.location) {
-                unsavedContact.location = (0, slugify_1.slugify)(validatedInput.location);
-            }
-            if (validatedInput.firstName) {
-                unsavedContact.firstName = validatedInput.firstName;
-            }
-            if (validatedInput.lastName) {
-                unsavedContact.lastName = validatedInput.lastName;
-            }
-            await crmService.createNewContact(unsavedContact);
-        }
-        catch (error) {
-            logger.error(`An error occurred whilst trying to create a new contact for: ${validatedInput.email}`, error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ reason: "Failed to create a new contact." }),
-            };
-        }
-        if (validatedInput.location === "arlo") {
-            return {
-                statusCode: 302,
-                headers: {
-                    Location: "https://acecentre.arlo.co",
-                },
-            };
-        }
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Create a new contact for email." }),
-        };
-    }
-    else {
-        for (const currentContact of listOfExistingContacts) {
-            try {
-                let updateContact = {
-                    id: currentContact.id,
-                    receivesNewsletter: true,
-                };
-                if (validatedInput.tags !== undefined &&
-                    currentContact.tags !== undefined) {
-                    updateContact.tags = [...currentContact.tags, ...validatedInput.tags];
-                }
-                else if (validatedInput.tags !== undefined) {
-                    updateContact.tags = validatedInput.tags;
-                }
-                if (!!currentContact.location == false && validatedInput.location) {
-                    updateContact.location = (0, slugify_1.slugify)(validatedInput.location);
-                }
-                if (currentContact.lastName.toLowerCase() === "unknown" &&
-                    validatedInput.lastName) {
-                    updateContact.lastName = validatedInput.lastName;
-                }
-                if (currentContact.firstName.toLowerCase() ===
-                    currentContact.email.toLowerCase() &&
-                    validatedInput.firstName) {
-                    updateContact.firstName = validatedInput.firstName;
-                }
-                await crmService.updateContact(updateContact);
-            }
-            catch (error) {
-                logger.error(`An error occurred whilst trying to opt ${currentContact.id} into mailing`, error);
-                return {
-                    statusCode: 500,
-                    body: JSON.stringify({ reason: "Failed to opt user into mailing." }),
-                };
-            }
-        }
-        if (validatedInput.location === "arlo") {
-            return {
-                statusCode: 302,
-                headers: {
-                    Location: "https://acecentre.arlo.co",
-                },
-            };
-        }
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                message: `Updated ${listOfExistingContacts.length} existing contact`,
-            }),
-        };
-    }
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ message: "Updated HubSpot contact" }),
+    };
 };
 exports.addToNewsletter = addToNewsletter;
 //# sourceMappingURL=add-to-newsletter.js.map
