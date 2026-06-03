@@ -14,22 +14,27 @@ const handler = async (handlerOptions) => {
     const logger = new logger_1.Logger({
         debugInfo: handlerOptions,
         consoleLevel: logger_1.LOG_LEVEL.INFO,
-        slackLevel: logger_1.LOG_LEVEL.ERROR,
+        slackLevel: logger_1.LOG_LEVEL.NONE,
     });
     const crmService = new sugar_service_1.SugarService({
         username: process.env.CRM_USERNAME,
         password: process.env.CRM_PASSWORD,
     }, logger);
-    try {
-        await logger.connect();
-    }
-    catch (err) {
-        console.log("Failed to connect to slack");
-        console.log(err);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ reason: "Failed to connect to slack" }),
-        };
+    const skipSlack = process.env.SKIP_SLACK === "true" ||
+        !process.env.SLACK_TOKEN ||
+        !process.env.SLACK_SIGNING_TOKEN;
+    if (!skipSlack) {
+        try {
+            await logger.connect();
+        }
+        catch (err) {
+            console.log("Failed to connect to slack");
+            console.log(err);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ reason: "Failed to connect to slack" }),
+            };
+        }
     }
     let result = {
         statusCode: 404,
