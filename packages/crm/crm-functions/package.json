@@ -6,6 +6,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "local-build": "tsc",
+    "dev": "tsc && node -r dotenv/config local-server.js",
+    "start": "node -r dotenv/config local-server.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "example": "ts-node ./example.ts"
