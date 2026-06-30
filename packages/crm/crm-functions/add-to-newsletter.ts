@@ -1,10 +1,7 @@
 import { Logger } from "./logger";
 import { slugify } from "./slugify";
 import { request } from "undici";
-import {
-  HandlerInput,
-  HandlerResult,
-} from "./types";
+import { HandlerInput, HandlerResult } from "./types";
 
 type AddToNewsletterInput = {
   email: string;
@@ -12,6 +9,7 @@ type AddToNewsletterInput = {
   firstName?: string;
   lastName?: string;
   tags?: Array<{ name: string }>;
+  event?: string;
 };
 
 const validateInput = (input: {
@@ -43,6 +41,10 @@ const validateInput = (input: {
 
   if (input.tags && Array.isArray(input.tags)) {
     validInput.tags = input.tags;
+  }
+
+  if (input.event && typeof input.event === "string") {
+    validInput.event = input.event;
   }
 
   return {
@@ -79,7 +81,7 @@ const getExistingContact = async (email: string) => {
         ],
       },
     ],
-    properties: ["email", "resource_tags", "signup_location"],
+    properties: ["email", "main_tag", "sign_up_form_location"],
     limit: 1,
   };
 
@@ -90,12 +92,12 @@ const getExistingContact = async (email: string) => {
   });
 
   const result = (await body.json()) as {
-    results?: Array<{ id: string; properties?: { tags?: string } }>;
+    results?: Array<{ id: string; properties?: { main_tag?: string } }>;
   };
 
   if (statusCode !== 200) {
     throw new Error(
-      `HubSpot search failed (${statusCode}): ${JSON.stringify(result)}`
+      `HubSpot search failed (${statusCode}): ${JSON.stringify(result)}`,
     );
   }
 
@@ -108,7 +110,7 @@ const getExistingContact = async (email: string) => {
 
 const upsertContact = async (
   email: string,
-  properties: { [key: string]: any }
+  properties: { [key: string]: any },
 ) => {
   const existing = await getExistingContact(email);
 
@@ -125,7 +127,7 @@ const upsertContact = async (
 
     if (statusCode !== 200) {
       throw new Error(
-        `HubSpot update failed (${statusCode}): ${JSON.stringify(result)}`
+        `HubSpot update failed (${statusCode}): ${JSON.stringify(result)}`,
       );
     }
 
@@ -144,7 +146,7 @@ const upsertContact = async (
 
   if (statusCode !== 201) {
     throw new Error(
-      `HubSpot create failed (${statusCode}): ${JSON.stringify(result)}`
+      `HubSpot create failed (${statusCode}): ${JSON.stringify(result)}`,
     );
   }
 
@@ -154,7 +156,7 @@ const upsertContact = async (
 export const addToNewsletter = async (
   handlerInput: HandlerInput,
   _crmService: unknown,
-  logger: Logger
+  logger: Logger,
 ): Promise<HandlerResult> => {
   const { validatedInput, valid, reason } = validateInput(handlerInput);
 
@@ -166,14 +168,13 @@ export const addToNewsletter = async (
   }
 
   try {
-    const hubspotTags =
-      validatedInput.tags?.map((tag) => tag.name).filter(Boolean) || [];
-
     const existing = await getExistingContact(validatedInput.email);
-    const existingTags =
-      existing?.properties?.tags?.split(";").filter(Boolean) || [];
-    const mergedTags = Array.from(
-      new Set([...existingTags, ...hubspotTags])
+    const incomingTags =
+      validatedInput.tags?.map((tag) => tag.name).filter(Boolean) || [];
+    const existingMainTags =
+      existing?.properties?.main_tag?.split(";").filter(Boolean) || [];
+    const mergedMainTags = Array.from(
+      new Set([...existingMainTags, ...incomingTags]),
     ).join(";");
 
     const properties: { [key: string]: any } = {
@@ -181,12 +182,16 @@ export const addToNewsletter = async (
       optin_newsletter_temporary: true,
     };
 
-    if (mergedTags) {
-      properties.tags = mergedTags;
+    if (mergedMainTags) {
+      properties.main_tag = mergedMainTags;
     }
 
     if (validatedInput.location) {
       properties.sign_up_form_location = slugify(validatedInput.location);
+    }
+
+    if (validatedInput.event) {
+      properties.event = validatedInput.event;
     }
 
     if (validatedInput.firstName) {

@@ -10,6 +10,7 @@ export type HandlerInput = {
   lastName?: string;
   location?: string;
   tags?: Array<{ name: string }>;
+  event?: string;
   eventSlug?: string;
 };
 
@@ -21,6 +22,7 @@ export type UpdateContact = {
   email?: string;
   receivesNewsletter?: boolean;
   tags?: Array<{ name: string }>;
+  event?: string;
 };
 
 export type NewContact = {
@@ -30,6 +32,7 @@ export type NewContact = {
   email?: string;
   receivesNewsletter?: boolean;
   tags?: Array<{ name: string }>;
+  event?: string;
 };
 
 export type Contact = {
@@ -40,6 +43,7 @@ export type Contact = {
   email: string;
   receivesNewsletter: boolean;
   tags: Array<{ name: string }>;
+  event?: string;
 };
 
 export type HandlerResult = {

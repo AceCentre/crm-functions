@@ -22,6 +22,9 @@ const validateInput = (input) => {
     if (input.tags && Array.isArray(input.tags)) {
         validInput.tags = input.tags;
     }
+    if (input.event && typeof input.event === "string") {
+        validInput.event = input.event;
+    }
     return {
         validatedInput: validInput,
         valid: true,
@@ -53,7 +56,7 @@ const getExistingContact = async (email) => {
                 ],
             },
         ],
-        properties: ["email", "resource_tags", "signup_location"],
+        properties: ["email", "main_tag", "sign_up_form_location"],
         limit: 1,
     };
     const { body, statusCode } = await (0, undici_1.request)(searchUrl, {
@@ -107,19 +110,22 @@ const addToNewsletter = async (handlerInput, _crmService, logger) => {
         };
     }
     try {
-        const hubspotTags = ((_a = validatedInput.tags) === null || _a === void 0 ? void 0 : _a.map((tag) => tag.name).filter(Boolean)) || [];
         const existing = await getExistingContact(validatedInput.email);
-        const existingTags = ((_c = (_b = existing === null || existing === void 0 ? void 0 : existing.properties) === null || _b === void 0 ? void 0 : _b.tags) === null || _c === void 0 ? void 0 : _c.split(";").filter(Boolean)) || [];
-        const mergedTags = Array.from(new Set([...existingTags, ...hubspotTags])).join(";");
+        const incomingTags = ((_a = validatedInput.tags) === null || _a === void 0 ? void 0 : _a.map((tag) => tag.name).filter(Boolean)) || [];
+        const existingMainTags = ((_c = (_b = existing === null || existing === void 0 ? void 0 : existing.properties) === null || _b === void 0 ? void 0 : _b.main_tag) === null || _c === void 0 ? void 0 : _c.split(";").filter(Boolean)) || [];
+        const mergedMainTags = Array.from(new Set([...existingMainTags, ...incomingTags])).join(";");
         const properties = {
             email: validatedInput.email,
             optin_newsletter_temporary: true,
         };
-        if (mergedTags) {
-            properties.tags = mergedTags;
+        if (mergedMainTags) {
+            properties.main_tag = mergedMainTags;
         }
         if (validatedInput.location) {
             properties.sign_up_form_location = (0, slugify_1.slugify)(validatedInput.location);
+        }
+        if (validatedInput.event) {
+            properties.event = validatedInput.event;
         }
         if (validatedInput.firstName) {
             properties.firstname = validatedInput.firstName;
