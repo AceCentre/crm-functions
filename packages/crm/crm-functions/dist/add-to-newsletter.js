@@ -127,6 +127,9 @@ const addToNewsletter = async (handlerInput, _crmService, logger) => {
         if (validatedInput.event) {
             properties.event = validatedInput.event;
         }
+        if (incomingTags.includes("pragmatics-profile-people-use-aac")) {
+            properties.last_resource_downloaded = new Date().toISOString();
+        }
         if (validatedInput.firstName) {
             properties.firstname = validatedInput.firstName;
         }
