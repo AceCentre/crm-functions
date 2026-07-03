@@ -54,6 +54,8 @@ const validateInput = (input: {
 };
 
 const HUBSPOT_BASE_URL = "https://api.hubapi.com";
+const HUBSPOT_NEWSLETTER_SUBSCRIPTION_ID = "1872717030";
+const HUBSPOT_NEWSLETTER_CONSENT_TEXT = "User subscribed via NewsLetter form";
 
 const getHubspotHeaders = () => {
   const token = process.env.HUBSPOT_TOKEN;
@@ -153,6 +155,34 @@ const upsertContact = async (
   return result;
 };
 
+const subscribeToNewsletter = async (email: string) => {
+  const subscribeUrl = `${HUBSPOT_BASE_URL}/communication-preferences/v3/subscribe`;
+  const payload = {
+    emailAddress: email,
+    subscriptionId: HUBSPOT_NEWSLETTER_SUBSCRIPTION_ID,
+    legalBasis: "CONSENT_WITH_NOTICE",
+    legalBasisExplanation: HUBSPOT_NEWSLETTER_CONSENT_TEXT,
+    timestamp: new Date().toISOString(),
+  };
+
+  const { body, statusCode } = await request(subscribeUrl, {
+    method: "POST",
+    headers: getHubspotHeaders(),
+    body: JSON.stringify(payload),
+  });
+
+  if (statusCode === 409) {
+    return;
+  }
+
+  if (statusCode < 200 || statusCode >= 300) {
+    const result = await body.json();
+    throw new Error(
+      `HubSpot subscribe failed (${statusCode}): ${JSON.stringify(result)}`,
+    );
+  }
+};
+
 export const addToNewsletter = async (
   handlerInput: HandlerInput,
   _crmService: unknown,
@@ -207,6 +237,7 @@ export const addToNewsletter = async (
     }
 
     await upsertContact(validatedInput.email, properties);
+    await subscribeToNewsletter(validatedInput.email);
   } catch (error) {
     logger.error("Failed to upsert HubSpot contact", error);
 
