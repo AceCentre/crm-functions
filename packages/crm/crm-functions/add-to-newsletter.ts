@@ -237,7 +237,20 @@ export const addToNewsletter = async (
     }
 
     await upsertContact(validatedInput.email, properties);
-    await subscribeToNewsletter(validatedInput.email);
+    try {
+      await subscribeToNewsletter(validatedInput.email);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      logger.error("Failed to update HubSpot subscription", error);
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Updated HubSpot contact",
+          subscriptionWarning: errorMessage,
+        }),
+      };
+    }
   } catch (error) {
     logger.error("Failed to upsert HubSpot contact", error);
 
