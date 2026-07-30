@@ -83,7 +83,7 @@ const getExistingContact = async (email: string) => {
         ],
       },
     ],
-    properties: ["email", "main_tag", "sign_up_form_location_2"],
+    properties: ["email", "main_tag", "sign_up_from_location_2"],
     limit: 1,
   };
 
@@ -217,7 +217,7 @@ export const addToNewsletter = async (
     }
 
     if (validatedInput.location) {
-      properties.sign_up_form_location_2 = slugify(validatedInput.location);
+      properties.sign_up_from_location_2 = slugify(validatedInput.location);
     }
 
     if (validatedInput.event) {

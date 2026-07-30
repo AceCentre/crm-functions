@@ -58,7 +58,7 @@ const getExistingContact = async (email) => {
                 ],
             },
         ],
-        properties: ["email", "main_tag", "sign_up_form_location_2"],
+        properties: ["email", "main_tag", "sign_up_from_location_2"],
         limit: 1,
     };
     const { body, statusCode } = await (0, undici_1.request)(searchUrl, {
@@ -146,7 +146,7 @@ const addToNewsletter = async (handlerInput, _crmService, logger) => {
             properties.main_tag = mergedMainTags;
         }
         if (validatedInput.location) {
-            properties.sign_up_form_location_2 = (0, slugify_1.slugify)(validatedInput.location);
+            properties.sign_up_from_location_2 = (0, slugify_1.slugify)(validatedInput.location);
         }
         if (validatedInput.event) {
             properties.event = validatedInput.event;
