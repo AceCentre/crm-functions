@@ -9,7 +9,7 @@ packages:
       SEND_SUCCESS: "${SEND_SUCCESS}"
     actions:
       - name: crm-functions
-        runtime: "nodejs:default"
+        runtime: "nodejs:22"
         limits:
           timeout: 120000
           memory: 256
